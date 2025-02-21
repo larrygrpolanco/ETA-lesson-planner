@@ -1,3 +1,0 @@
-flask==3.1.0
-python-dotenv==1.0.1
-anthropic==0.46.0
