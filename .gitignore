@@ -1,37 +1,23 @@
-# Environment
+node_modules
+
+# Output
+.output
+.vercel
+.netlify
+.wrangler
+/.svelte-kit
+/build
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Env
 .env
-.venv/
-venv/
-ENV/
+.env.*
+!.env.example
+!.env.test
 
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
-
-# Logs
-backend/logs/
-*.log
-
-# IDE
-.idea/
-.vscode/
-*.swp
-*.swo
+# Vite
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*
