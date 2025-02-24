@@ -1,1 +1,113 @@
 @import 'tailwindcss';
+
+.relative {
+	position: relative;
+}
+
+.absolute {
+	position: absolute;
+}
+
+.form-group {
+	margin-bottom: 1rem;
+}
+
+.peer:placeholder-shown + label {
+	top: 1rem;
+	font-size: 1rem;
+	color: rgb(138, 162, 203);
+}
+
+.peer:focus + label,
+.peer:not(:placeholder-shown) + label {
+	top: -0.6rem; /* Corrected and consolidated top value */
+	font-size: 0.875rem;
+	color: #10b981; /* Emerald-500 color for focused label */
+	background-color: rgba(249, 250, 251); /* Corrected and consolidated background-color to white */
+	padding: 0 0.25rem;
+	border-radius: 100px;
+}
+
+
+/* Custom classes */
+.input-group {
+	position: relative;
+}
+
+.input-field {
+	width: 100%;
+	border-radius: 0.75rem;
+	border-width: 1px;
+	border-style: solid;
+    border-color: #d1d5db;
+	padding: 1rem;
+	font-size: 1.125rem;
+	line-height: 1.75rem;
+	transition-property: all;
+	transition-duration: 200ms;
+	-webkit-appearance: none;
+  	-moz-appearance: none;
+  	appearance: none;
+}
+
+.input-field::placeholder {
+	color: #9ca3af;
+}
+
+.input-field:focus {
+	border-color: transparent;
+	outline: none;
+    box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.5);
+}
+
+
+.input-label {
+	position: absolute;
+	top: 1rem;
+	left: 1rem;
+	background-color: 249 250 251;
+	padding-left: 0.25rem;
+	padding-right: 0.25rem;
+	font-size: 1.125rem;
+	line-height: 1.75rem;
+	color: #9ca3af;
+	transition-property: all;
+	transition-duration: 200ms;
+    border-radius: 100px;
+}
+
+
+.submit-button {
+	width: 100%;
+	border-radius: 0.75rem;
+    background-color: #10b981;
+	padding-left: 1.5rem;
+	padding-right: 1.5rem;
+	padding-top: 1rem;
+	padding-bottom: 1rem;
+	font-size: 1.125rem;
+	line-height: 1.75rem;
+	font-weight: 500;
+	color: #ffffff;
+	transition-property: all;
+	transition-duration: 200ms;
+	cursor: pointer;
+	border: none;
+	-webkit-appearance: none;
+  	-moz-appearance: none;
+  	appearance: none;
+}
+
+.submit-button:hover {
+    background-color: #059669;
+}
+
+.submit-button:focus {
+	outline: none;
+    box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.5);
+}
+
+.submit-button:disabled {
+	cursor: not-allowed;
+	opacity: 0.5;
+}
