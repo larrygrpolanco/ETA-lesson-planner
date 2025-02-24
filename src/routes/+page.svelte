@@ -1,5 +1,7 @@
 <!-- // src/routes/+page.svelte -->
 <script>
+	import { marked } from 'marked'; // Import marked
+
 	let formData = {
 		topic: '',
 		grade: 1,
@@ -25,10 +27,34 @@
 	let error = null;
 	let phases = [
 		// Initialize phases with loading state
-		{ name: 'Refining Objectives', key: 'objectives', content: null, isLoading: false, completed: false },
-		{ name: 'Generating Activities', key: 'activities', content: null, isLoading: false, completed: false },
-		{ name: 'Preparing Components', key: 'components', content: null, isLoading: false, completed: false },
-		{ name: 'Creating Final Plan', key: 'finalPlan', content: null, isLoading: false, completed: false }
+		{
+			name: 'Refining Objectives',
+			key: 'objectives',
+			content: null,
+			isLoading: false,
+			completed: false
+		},
+		{
+			name: 'Generating Activities',
+			key: 'activities',
+			content: null,
+			isLoading: false,
+			completed: false
+		},
+		{
+			name: 'Preparing Components',
+			key: 'components',
+			content: null,
+			isLoading: false,
+			completed: false
+		},
+		{
+			name: 'Creating Final Plan',
+			key: 'finalPlan',
+			content: null,
+			isLoading: false,
+			completed: false
+		}
 	];
 	let finalLessonPlanOutput = null;
 
@@ -37,24 +63,34 @@
 		error = null;
 		lessonPlan = null;
 		finalLessonPlanOutput = null;
-		phases = phases.map(phase => ({ ...phase, content: null, isLoading: false, completed: false })); // Reset all phases
+		phases = phases.map((phase) => ({
+			...phase,
+			content: null,
+			isLoading: false,
+			completed: false
+		})); // Reset all phases
 
 		for (let i = 0; i < phases.length; i++) {
 			const phase = phases[i];
-			phases = phases.map((p, index) => index === i ? { ...p, isLoading: true } : p); // Start loading current phase
+			phases = phases.map((p, index) => (index === i ? { ...p, isLoading: true } : p)); // Start loading current phase
 			phases = [...phases]; // trigger reactivity
 
 			try {
-				const response = await fetch('/api/generate-lesson', { // backend will simulate phases sequentially
+				const response = await fetch('/api/generate-lesson', {
+					// backend will simulate phases sequentially
 					method: 'POST',
-					headers: { 'Content-Type': 'application/json' },
+					headers: {
+						'Content-Type': 'application/json',
+						phase: phase.name
+					},
 					body: JSON.stringify(formData)
 				});
 
 				if (!response.ok) throw new Error(`Failed to generate ${phase.name}`);
 				const data = await response.json();
 
-				if (data.phase.name === 'Creating Final Plan') { // Last phase returns final lesson plan
+				if (data.phase.name === 'Creating Final Plan') {
+					// Last phase returns final lesson plan
 					finalLessonPlanOutput = data.finalLessonPlan;
 					lessonPlan = finalLessonPlanOutput; // For existing logic
 				}
@@ -66,17 +102,15 @@
 					return p;
 				});
 				phases = [...phases]; // trigger reactivity
-
 			} catch (err) {
 				error = err.message;
-				phases = phases.map(p => ({ ...p, isLoading: false })); // Stop loading on error
+				phases = phases.map((p) => ({ ...p, isLoading: false })); // Stop loading on error
 				phases = [...phases]; // trigger reactivity
 				break; // Stop processing further phases on error
 			}
 		}
 		isLoading = false; // Overall loading complete (or stopped due to error)
 	}
-
 
 	function copyToClipboard() {
 		if (finalLessonPlanOutput) {
@@ -92,28 +126,6 @@
 		}
 	}
 </script>
-
-<style>
-	.spinner {
-		border: 4px solid rgba(0, 0, 0, 0.1);
-		border-top: 4px solid #3498db;
-		border-radius: 50%;
-		width: 20px;
-		height: 20px;
-		animation: spin 1s linear infinite;
-		display: inline-block; /* To align with text */
-		margin-left: 8px;
-	}
-
-	@keyframes spin {
-		0% {
-			transform: rotate(0deg);
-		}
-		100% {
-			transform: rotate(360deg);
-		}
-	}
-</style>
 
 <div class="min-h-screen bg-gray-100">
 	<main class="container mx-auto max-w-3xl px-6 py-16">
@@ -236,22 +248,25 @@
 			<div class>
 				<!-- Preliminary Phases - Collapsible -->
 				{#each phases as phase}
-					{#if phase.completed || phase.isLoading || phase.content} <!-- Show phases as they complete or load -->
-						<details
-							class="rounded-lg border border-gray-200 bg-white p-4 shadow-sm"
-							open={phase.completed || phase.isLoading}
-						>
+					{#if phase.completed || phase.isLoading || phase.content}
+						<!-- Show phases as they complete or load -->
+						<details class="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+							<!-- Removed: open={phase.completed || phase.isLoading} -->
 							<summary class="font-semibold text-gray-900 marker:text-sky-500">
 								{phase.name}
 								{#if phase.isLoading}
 									<div class="spinner"></div>
 								{/if}
 							</summary>
-							<div class="mt-2 text-gray-700">
+							<div class="markdown-body mt-2 text-gray-700">
 								{#if phase.content}
-									<pre class="whitespace-pre-wrap">{phase.content.content
-											? JSON.stringify(phase.content.content, null, 2)
-											: phase.content}</pre>
+									{#if typeof phase.content === 'string'}
+										{@html marked.parse(phase.content)}
+									{:else if phase.content.content}
+										{@html marked.parse(phase.content.content)}
+									{:else if phase.content.fullPlan}
+										{@html marked.parse(phase.content.fullPlan)}
+									{/if}
 								{:else if phase.isLoading}
 									<p>Processing...</p>
 								{/if}
@@ -266,7 +281,9 @@
 						<h2 class="mb-4 text-2xl font-bold text-gray-900">
 							Final Lesson Plan: {finalLessonPlanOutput.topic}
 						</h2>
-						<pre class="whitespace-pre-wrap">{JSON.stringify(finalLessonPlanOutput, null, 2)}</pre>
+						<div class="markdown-body">
+							{@html marked.parse(finalLessonPlanOutput.finalPlan)}
+						</div>
 						<div class="mt-4">
 							<button class="submit-button" on:click={copyToClipboard}>Copy to Clipboard</button>
 						</div>
