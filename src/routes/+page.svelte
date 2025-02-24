@@ -1,17 +1,19 @@
-<!-- src/routes/+page.svelte -->
-<script lang="ts">
-  import type { LessonPlanFormData, ApiResponse } from '$lib/types';
-  import { OPTIONS } from '$lib/types';
-  import "../app.css";
+// src/routes/+page.svelte
+<script>
+  // Tab management
+  let activeTab = 'basic';
   
-  // Initialize form data with proper types
-  let formData: LessonPlanFormData = {
+  // Form data store
+  let formData = {
+    // Core fields (Basic Settings tab)
     topic: '',
     grade: 1,
     classDuration: '',
     coTeachingModel: 'One teach, one observe',
-    classroomSetting: '',
     objectives: '',
+    
+    // Optional fields (Advanced Settings tab)
+    classroomSetting: '',
     classSize: 25,
     proficiencyLevels: ['Elementary'],
     assessmentTypes: [],
@@ -20,227 +22,272 @@
     extraConsiderations: ''
   };
 
-  // State management
+  // Options for select inputs
+  const coTeachingOptions = [
+    "One teach, one observe",
+    "One teach, one assist", 
+    "Team teaching",
+    "Station teaching",
+    "Parallel teaching",
+    "Alternative teaching"
+  ];
+
+  const assessmentOptions = [
+    "Watch & Note: observing student work and behavior",
+    "Speaking Check: asking questions and listening to responses",
+    "Quick Poll: understanding checks via thumbs up/down or voting",
+    "Practice Task: students applying what they learned",
+    "Group Work: collaborative demonstration of learning",
+    "Written Check: quick writing tasks like worksheets or questions"
+  ];
+
+  const proficiencyOptions = ["Beginner", "Elementary", "Intermediate", "Advanced"];
+
+  // Form submission handling
   let isLoading = false;
-  let errorMessage = '';
-  let lessonPlan = '';
+  let error = null;
+  let lessonPlan = null;
 
-  // Form submission handler
-  async function handleSubmit(): Promise<void> {
-    // Validate required fields
-    if (!formData.topic || !formData.classDuration || !formData.objectives) {
-      errorMessage = 'Please fill in all required fields (marked with *)';
-      return;
-    }
-
+  async function handleSubmit() {
     isLoading = true;
-    errorMessage = '';
-
+    error = null;
+    
     try {
       const response = await fetch('/api/generate-lesson', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to generate lesson plan');
-      }
-
-      const data: ApiResponse = await response.json();
-      
-      if (data.error) {
-        throw new Error(data.error);
-      }
-
-      lessonPlan = data.lessonPlan ?? '';
-    } catch (error) {
-      errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
+      if (!response.ok) throw new Error('Failed to generate lesson plan');
+      lessonPlan = await response.json();
+    } catch (err) {
+      error = err.message;
     } finally {
       isLoading = false;
     }
   }
-
-  // Generate array of grade options
-  const gradeOptions = Array.from({ length: 12 }, (_, i) => i + 1);
 </script>
 
-<div class="container mx-auto px-4 py-8">
+<main class="container mx-auto px-4 py-8">
   <h1 class="text-3xl font-bold mb-4">ETA Lesson Plan Generator</h1>
-  <p class="mb-8">Create lesson plan ideas. Share your topic, objectives, and class details, and get a customized lesson plan draft.</p>
+  
+  <p class="mb-8">
+    Create lesson plan ideas. Share your topic, objectives, and class details, 
+    and we'll help you draft a lesson plan. Use it as a starting point to build 
+    your perfect lesson.
+  </p>
 
-  <form on:submit|preventDefault={handleSubmit} class="space-y-6">
-    <!-- Core Information -->
-    <div class="bg-white p-6 rounded-lg shadow-md">
-      <h2 class="text-xl font-semibold mb-4">Class Context</h2>
-      
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label class="block mb-2">
-            Topic/Theme*
+  <!-- Tab Navigation -->
+  <div class="border-b border-gray-200 mb-6">
+    <nav class="flex space-x-4">
+      <button
+        class="px-4 py-2 {activeTab === 'basic' ? 'border-b-2 border-blue-500 text-blue-600' : ''}"
+        on:click={() => activeTab = 'basic'}
+      >
+        Basic Settings
+      </button>
+      <button
+        class="px-4 py-2 {activeTab === 'advanced' ? 'border-b-2 border-blue-500 text-blue-600' : ''}"
+        on:click={() => activeTab = 'advanced'}
+      >
+        Advanced Settings
+      </button>
+    </nav>
+  </div>
+
+  <!-- Main Form -->
+  <form on:submit|preventDefault={handleSubmit} class="space-y-6 mb-8">
+    {#if activeTab === 'basic'}
+      <!-- Basic Settings Tab -->
+      <section class="space-y-6">
+        <!-- Topic and Grade -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label for="topic" class="block font-medium mb-1">Topic/Theme*</label>
             <input
               type="text"
+              id="topic"
               bind:value={formData.topic}
               placeholder="e.g., Food and Nutrition, Family Members"
               class="w-full p-2 border rounded"
+              required
             />
-          </label>
-
-          <label class="block mb-2">
-            Grade Level
-            <select 
+          </div>
+          
+          <div>
+            <label for="grade" class="block font-medium mb-1">Grade Level</label>
+            <select
+              id="grade"
               bind:value={formData.grade}
               class="w-full p-2 border rounded"
             >
-              {#each gradeOptions as grade}
-                <option value={grade}>{grade}</option>
+              {#each Array(12) as _, i}
+                <option value={i + 1}>{i + 1}</option>
               {/each}
             </select>
-          </label>
+          </div>
         </div>
 
-        <div>
-          <label class="block mb-2">
-            Class Duration*
+        <!-- Duration and Co-teaching Model -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label for="duration" class="block font-medium mb-1">Class Duration*</label>
             <input
               type="text"
+              id="duration"
               bind:value={formData.classDuration}
               placeholder="e.g., 40 min"
               class="w-full p-2 border rounded"
+              required
             />
-          </label>
-
-          <label class="block mb-2">
-            Co-teaching Model
-            <select 
+          </div>
+          
+          <div>
+            <label for="coTeaching" class="block font-medium mb-1">Co-teaching Model</label>
+            <select
+              id="coTeaching"
               bind:value={formData.coTeachingModel}
               class="w-full p-2 border rounded"
             >
-              {#each OPTIONS.coTeaching as option}
+              {#each coTeachingOptions as option}
                 <option value={option}>{option}</option>
               {/each}
             </select>
-          </label>
+          </div>
         </div>
-      </div>
 
-      <label class="block mb-2">
-        Classroom Setting
-        <textarea
-          bind:value={formData.classroomSetting}
-          placeholder="Describe the general classroom environment and setting"
-          class="w-full p-2 border rounded h-24"
-        ></textarea>
-      </label>
-
-      <label class="block mb-2">
-        Learning Objectives*
-        <textarea
-          bind:value={formData.objectives}
-          placeholder="Example:&#10;SWBAT identify common food vocabulary words&#10;SWBAT use 'I like' and 'I don't like' in simple sentences"
-          class="w-full p-2 border rounded h-32"
-        ></textarea>
-      </label>
-    </div>
-
-    <!-- Optional Information -->
-    <div class="bg-white p-6 rounded-lg shadow-md">
-      <h2 class="text-xl font-semibold mb-4">Extra Context (Optional)</h2>
-      
-      <div class="space-y-4">
-        <label class="block">
-          Number of Students
-          <input
-            type="number"
-            bind:value={formData.classSize}
-            min="1"
-            max="40"
-            class="w-full p-2 border rounded"
-          />
-        </label>
-
-        <label class="block">
-          Student English Levels
-          <select
-            multiple
-            bind:value={formData.proficiencyLevels}
-            class="w-full p-2 border rounded"
-          >
-            {#each OPTIONS.proficiency as option}
-              <option value={option}>{option}</option>
-            {/each}
-          </select>
-        </label>
-
-        <label class="block">
-          Assessment Types
-          <select
-            multiple
-            bind:value={formData.assessmentTypes}
-            class="w-full p-2 border rounded"
-          >
-            {#each OPTIONS.assessment as option}
-              <option value={option}>{option}</option>
-            {/each}
-          </select>
-        </label>
-
-        <label class="block">
-          Teaching Materials
+        <!-- Objectives -->
+        <div>
+          <label for="objectives" class="block font-medium mb-1">Learning Objectives*</label>
           <textarea
-            bind:value={formData.materials}
-            placeholder="List any specific materials you would like to use"
+            id="objectives"
+            bind:value={formData.objectives}
+            placeholder="Example:&#10;SWBAT identify common food vocabulary words&#10;SWBAT use 'I like' and 'I don't like' in simple sentences"
+            class="w-full p-2 border rounded h-32"
+            required
+          ></textarea>
+        </div>
+      </section>
+    {:else}
+      <!-- Advanced Settings Tab -->
+      <section class="space-y-6">
+        <!-- Classroom Setting -->
+        <div>
+          <label for="setting" class="block font-medium mb-1">Classroom Setting</label>
+          <textarea
+            id="setting"
+            bind:value={formData.classroomSetting}
+            placeholder="Describe the general classroom environment and setting.&#10;e.g., English classroom, homeroom class, outdoors PE."
             class="w-full p-2 border rounded h-24"
           ></textarea>
-        </label>
+        </div>
 
-        <label class="block">
-          Key Vocabulary or Phrases
-          <textarea
-            bind:value={formData.keyVocabulary}
-            placeholder="List any specific vocabulary or phrases"
-            class="w-full p-2 border rounded h-24"
-          ></textarea>
-        </label>
+        <!-- Class Size and Proficiency Levels -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label for="classSize" class="block font-medium mb-1">Number of Students</label>
+            <input
+              type="number"
+              id="classSize"
+              bind:value={formData.classSize}
+              min="1"
+              max="40"
+              class="w-full p-2 border rounded"
+            />
+          </div>
+          
+          <div>
+            <label for="proficiency" class="block font-medium mb-1">Student English Levels</label>
+            <select
+              id="proficiency"
+              multiple
+              bind:value={formData.proficiencyLevels}
+              class="w-full p-2 border rounded h-24"
+            >
+              {#each proficiencyOptions as option}
+                <option value={option}>{option}</option>
+              {/each}
+            </select>
+          </div>
+        </div>
 
-        <label class="block">
-          Extra Considerations
+        <!-- Assessment Types -->
+        <div>
+          <label class="block font-medium mb-1">Assessment Methods</label>
+          <div class="space-y-2">
+            {#each assessmentOptions as option}
+              <label class="flex items-start space-x-2">
+                <input
+                  type="checkbox"
+                  value={option}
+                  bind:group={formData.assessmentTypes}
+                  class="mt-1"
+                />
+                <span>{option}</span>
+              </label>
+            {/each}
+          </div>
+        </div>
+
+        <!-- Materials and Vocabulary -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label for="materials" class="block font-medium mb-1">Teaching Materials</label>
+            <textarea
+              id="materials"
+              bind:value={formData.materials}
+              placeholder="List any specific materials you would like to use"
+              class="w-full p-2 border rounded h-24"
+            ></textarea>
+          </div>
+          
+          <div>
+            <label for="vocabulary" class="block font-medium mb-1">Key Vocabulary/Phrases</label>
+            <textarea
+              id="vocabulary"
+              bind:value={formData.keyVocabulary}
+              placeholder="List any specific vocabulary or phrases to include"
+              class="w-full p-2 border rounded h-24"
+            ></textarea>
+          </div>
+        </div>
+
+        <!-- Extra Considerations -->
+        <div>
+          <label for="extra" class="block font-medium mb-1">Extra Considerations</label>
           <textarea
+            id="extra"
             bind:value={formData.extraConsiderations}
-            placeholder="Add any additional important information"
+            placeholder="Add any additional important information about your class or lesson"
             class="w-full p-2 border rounded h-24"
           ></textarea>
-        </label>
-      </div>
-    </div>
-
-    {#if errorMessage}
-      <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded" role="alert">
-        {errorMessage}
-      </div>
+        </div>
+      </section>
     {/if}
 
+    <!-- Submit Button (shown on both tabs) -->
     <button
       type="submit"
-      class="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 disabled:bg-blue-300"
+      class="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600 disabled:bg-blue-300"
       disabled={isLoading}
     >
-      {isLoading ? 'Generating Lesson Plan...' : 'Generate Lesson Plan'}
+      {isLoading ? 'Generating...' : 'Generate Lesson Plan'}
     </button>
   </form>
 
-  {#if lessonPlan}
-    <div class="mt-8 bg-white p-6 rounded-lg shadow-md">
-      <h2 class="text-xl font-semibold mb-4">Generated Lesson Plan</h2>
-      {@html lessonPlan}
+  <!-- Error Display -->
+  {#if error}
+    <div class="bg-red-100 border-l-4 border-red-500 p-4 mb-4">
+      <p class="text-red-700">{error}</p>
     </div>
   {/if}
-</div>
 
-<style>
-  :global(body) {
-    background-color: #f3f4f6;
-  }
-</style>
+  <!-- Lesson Plan Display -->
+  {#if lessonPlan}
+    <section class="bg-white p-6 rounded-lg shadow-lg">
+      <h2 class="text-2xl font-bold mb-4">{lessonPlan.topic}</h2>
+      <!-- Add more lesson plan display structure here -->
+    </section>
+  {/if}
+</main>

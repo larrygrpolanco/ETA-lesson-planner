@@ -1,0 +1,868 @@
+
+[     UTC     ] Logs for planning-assistant.streamlit.app/
+────────────────────────────────────────────────────────────────────────────────────────
+[08:16:05] 🚀 Starting up repository: 'lesson-plan-assistant', branch: 'main', main module: 'main.py'
+[08:16:05] 🐙 Cloning repository...
+[08:16:11] 🐙 Cloning into '/mount/src/lesson-plan-assistant'...
+Warning: Permanently added the ED25519 host key for IP address '140.82.116.3' to the list of known hosts.
+
+[08:16:11] 🐙 Cloned repository!
+[08:16:11] 🐙 Pulling code changes from Github...
+[08:16:13] 📦 Processing dependencies...
+
+──────────────────────────────────────── uv ───────────────────────────────────────────
+
+Using uv pip install.
+Using Python 3.12.9 environment at /home/adminuser/venv
+Resolved [2025-02-18 08:16:21.937823] 14 packages[2025-02-18 08:16:21.938172]  [2025-02-18 08:16:21.938492] in 4.94s[2025-02-18 08:16:21.938806] 
+Prepared [2025-02-18 08:16:25.576493] 14 packages[2025-02-18 08:16:25.576796]  [2025-02-18 08:16:25.577098] in 3.59s[2025-02-18 08:16:25.577708] 
+Installed [2025-02-18 08:16:27.690045] 14 packages in 2.09s
+ + annotated-types==0.7.0
+ + anthropic==0.45.2
+ + anyio==4.8.0
+ + certifi==2025.1.31
+ + distro==1.9.0
+ + h11==0.14.0
+ + httpcore==1.0.7
+ + httpx==0.28.1
+ + idna==3.10
+ + jiter==0.8.2
+ + pydantic==2.10.6
+ + pydantic-core==2.27.2
+ + sniffio==1.3.1
+ + typing-extensions==4.12.2
+Checking if Streamlit is installed
+Installing rich for an improved exception logging
+Using uv pip install.
+Using Python 3.12.9 environment at /home/adminuser/venv
+Resolved 4 packages in 711ms
+Prepared [2025-02-18 08:16:32.616925] 4 packages[2025-02-18 08:16:32.617148]  [2025-02-18 08:16:32.617374] in 4.06s[2025-02-18 08:16:32.617566] 
+Installed [2025-02-18 08:16:33.302448] 4 packages[2025-02-18 08:16:33.302737]  [2025-02-18 08:16:33.302944] in 660ms[2025-02-18 08:16:33.303179] 
+ + markdown-it-py==3.0.0
+ + mdurl==0.1.2
+ + pygments==2.19.1
+ + rich==13.9.4
+
+────────────────────────────────────────────────────────────────────────────────────────
+
+[08:16:35] 🐍 Python dependencies were installed from /mount/src/lesson-plan-assistant/requirements.txt using uv.
+Check if streamlit is installed
+
+──────────────────────────────── Installing Streamlit ──────────────────────────────────
+
+Using uv pip install.
+Using Python 3.12.9 environment at /home/adminuser/venv
+Resolved [2025-02-18 08:16:44.591090] 41 packages[2025-02-18 08:16:44.591385]  [2025-02-18 08:16:44.591675] in 7.94s[2025-02-18 08:16:44.591893] 
+Prepared [2025-02-18 08:17:42.789103] 34 packages[2025-02-18 08:17:42.789538]  [2025-02-18 08:17:42.789758] in 58.17s[2025-02-18 08:17:42.789964] 
+Installed 34 packages in 4.75s
+ + altair==5.5.0
+ + attrs==25.1.0
+ + blinker==1.9.0
+ + cachetools==5.5.1
+ + charset-normalizer==3.4.1
+ + click==8.1.8
+ + gitdb==4.0.12
+ + gitpython==3.1.44
+ + jinja2==3.1.5
+ + jsonschema==4.23.0
+ + jsonschema-specifications==2024.10.1
+ + markupsafe==3.0.2
+ + narwhals==1.27.1
+ + numpy==2.2.3
+ + packaging==24.2
+ + pandas==2.2.3
+ + pillow==11.1.0
+ + protobuf==5.29.3
+ + pyarrow==[2025-02-18 08:17:47.551450] 19.0.0[2025-02-18 08:17:47.551856] 
+ [2025-02-18 08:17:47.552731] +[2025-02-18 08:17:47.553249]  [2025-02-18 08:17:47.556378] pydeck[2025-02-18 08:17:47.562494] ==[2025-02-18 08:17:47.563246] 0.9.1[2025-02-18 08:17:47.571404] 
+ + python-dateutil==2.9.0.post0
+ + pytz==2025.1
+ + referencing==0.36.2
+ + requests==2.32.3
+ + rpds-py==0.22.3
+ + six==1.17.0
+ + smmap==5.0.2
+ + streamlit==1.42.1
+ + tenacity==9.0.0
+ + toml==0.10.2
+ + tornado==6.4.2
+ + tzdata==2025.1
+ + urllib3==2.3.0
+ + watchdog[2025-02-18 08:17:47.600549] ==6.0.0
+
+────────────────────────────────────────────────────────────────────────────────────────
+
+[08:17:48] 📦 Processed dependencies!
+
+
+
+
+=== Input Parameters ===
+{'topic': 'Catching up, Long time no see', 'grade': 7, 'class_duration': '45', 'objectives': 'SWBAT practice catching up with an old friend\nSWBAT practice getting to know a new friend\nSWBAT understand and use common phrases and questions for expressing interest', 'co_teaching_model': 'One teach, one assist', 'classroom_setting': 'English conversation class', 'class_size': 15, 'proficiency_levels': ['Elementary'], 'materials': 'Powerpoint', 'key_vocabulary': '', 'extra_considerations': '', 'assessment_types': []}
+
+=== Refined Objectives ===
+### Refined Objectives
+- Students will be able to generate and respond to at least 3 conversational questions about personal experiences and interests with 80% accuracy during paired speaking activities
+- Students will be able to demonstrate active listening skills by asking follow-up questions and using appropriate conversational gambits when interacting with a partner
+- Students will be able to utilize basic social interaction vocabulary and phrases to initiate and maintain a 2-3 minute conversation in English
+
+### Planning Considerations
+**Differentiation Opportunities**
+Lower-level students can use provided conversation starter cards with pre-written questions, while advanced students can be challenged to create original questions and more complex conversational exchanges. Pair students with mixed proficiency levels to support collaborative learning.
+
+**Co-teaching Integration**
+The Lead English Teacher (LET) can model initial conversation structures, while the English Teaching Assistant (ETA) circulates to provide individualized support, demonstrate pronunciation, and offer real-time feedback during speaking activities.
+
+**Cultural Elements**
+Incorporate discussion of cultural differences in conversational norms, such as appropriate personal questions, acceptable small talk topics, and non-verbal communication expectations between Taiwanese and Western communication styles.
+
+**Assessment Approaches**
+Use a holistic speaking rubric that evaluates conversational skills, including vocabulary use, question formation, listening comprehension, and interactive communication. Conduct both peer assessment (students evaluate each other's conversations) and teacher observation using a structured checklist of target language skills.
+
+=== Procedures ===
+### Time Distribution Overview
+Total Class Time: 45 minutes
+- Warm-up: 7 minutes
+- Introduction: 8 minutes
+- Activities: 20 minutes
+- Assessment: 7 minutes
+- Closure: 3 minutes
+
+### I. Warm-up (7 min)
+Objective Connection: Activate prior knowledge about social interactions and prepare students for conversational practice
+
+Steps:
+1. LET displays PowerPoint slide with "Long Time No See" as title (2 min)
+   - Ask students to brainstorm what this phrase means
+   - Elicit initial responses in a quick whole-class discussion
+
+2. Quick Mime Activity (3 min)
+   - Teacher demonstrates meeting an old friend through exaggerated body language
+   - Students guess the scenario and typical English phrases used
+   - Encourage spontaneous English responses
+
+3. Vocabulary Quickdraw (2 min)
+   - Students write/draw 2-3 words they might use when meeting someone after a long time
+   - Share with a partner using simple phrases
+
+### II. Introduction (8 min)
+Objective Connection: Model appropriate conversation starters and listening strategies
+
+Steps:
+1. Teacher Demonstration (4 min)
+   - LET and ETA model a realistic "catching up" conversation
+   - Highlight key conversational elements:
+     * Greeting
+     * Follow-up questions
+     * Active listening cues
+
+2. Conversation Starter Breakdown (4 min)
+   - Display common conversation starters on PowerPoint
+   - Practice pronunciation as a class
+   - Students practice in pairs, rotating questions
+
+### III. Main Activities (20 min)
+Objective Connection: Provide structured practice for generating and responding to conversational questions
+
+Steps:
+1. Conversation Card Activity (8 min)
+   - Distribute conversation starter cards to each pair
+   - Students take turns asking and responding to questions
+   - Rotate partners every 3 minutes
+
+2. Progressive Conversation Challenge (12 min)
+   - Students start with provided questions
+   - Gradually remove scaffolding
+   - Encourage students to create their own follow-up questions
+
+Differentiation Note:
+- Lower-level students use provided cards with pre-written questions
+- Advanced students create original follow-up questions
+- Mixed-proficiency pairs support collaborative learning
+
+### IV. Assessment (7 min)
+Success Criteria:
+- Demonstrates ability to ask and answer at least 3 questions
+- Uses appropriate conversational vocabulary
+- Shows active listening skills
+
+Steps:
+1. Peer Assessment Checklist (4 min)
+   - Students evaluate partner using simple rubric
+   - Focus on question quality and response depth
+
+2. Teacher Observation (3 min)
+   - Circulate and note student performance
+   - Provide immediate, constructive feedback
+
+### V. Closure (3 min)
+Steps:
+1. Reflection Circle
+   - Students share one new conversation skill learned
+   - Recap key vocabulary and strategies
+
+2. Preview Next Lesson
+   - Hint at upcoming conversation practice
+
+### VI. Optional Extensions
+- Create a conversation video journal
+- Write a dialogue demonstrating learned skills
+- Online discussion board sharing conversation experiences
+
+Key Teaching Notes:
+- Maintain a relaxed, low-stress environment
+- Prioritize communication over perfect grammar
+- Encourage risk-taking in language use
+- Provide frequent, positive reinforcement
+
+Cultural Consideration:
+- Discuss cultural differences in greeting and small talk
+- Highlight appropriate conversation boundaries
+- Compare Taiwanese and Western communication styles
+
+Materials Needed:
+- Conversation starter cards
+- Peer assessment checklists
+- PowerPoint with key vocabulary
+- Timer for activity rotations
+
+=== Components ===
+### Teaching Materials
+- Conversation starter cards (provide structured speaking prompts)
+- Peer assessment checklists (guide student evaluation)
+- PowerPoint slides (visual support for vocabulary and examples)
+- Timer (manage activity rotations)
+
+### Basic Vocabulary & Sentence Patterns
+Essential Vocabulary:
+- Catch up (to discuss recent events)
+- Long time (referring to extended period)
+- Update (share recent information)
+- Reconnect (reestablish communication)
+- Recent (happening not long ago)
+
+Key Sentence Patterns:
+- "What have you been up to lately?"
+- "It's been a while! How are you doing?"
+
+### Reflection Questions
+1. Student Learning Outcomes:
+   "To what extent did students demonstrate increased confidence and ability in generating spontaneous conversational questions during the lesson?"
+
+2. Teaching Effectiveness:
+   "How effectively did the scaffolded activities support students with varying English proficiency levels in achieving the lesson's communication objectives?"
+
+3. Cultural/Language Considerations:
+   "In what ways did the lesson help students understand cultural differences in communication styles and appropriate social interaction norms?"
+
+These reflection questions align with ELTP Standards, particularly focusing on Instruction Implementation (Standard 3), Assessment (Standard 4), and Sociocultural Context (Standard 2).
+
+=== Final Plan ===
+Here's a starting idea for your lesson plan!
+
+# Catching Up, Long Time No See
+**Grade:** 7  
+**Time:** 45 minutes  
+**Setting:** English Conversation Class
+
+## Learning Objectives
+Students will be able to:
+- Generate and respond to at least 3 conversational questions about personal experiences and interests with 80% accuracy
+- Demonstrate active listening skills by asking follow-up questions and using appropriate conversational gambits
+- Utilize basic social interaction vocabulary to maintain a 2-3 minute conversation in English
+
+## Teaching Materials
+- Conversation starter cards
+- Peer assessment checklists
+- PowerPoint slides with vocabulary and examples
+- Timer for activity rotations
+
+## Basic Vocabulary & Sentence Patterns
+**New Vocabulary:**
+- Catch up (to discuss recent events)
+- Long time (referring to extended period)
+- Update (share recent information)
+- Reconnect (reestablish communication)
+- Recent (happening not long ago)
+
+**Target Patterns:**
+- "What have you been up to lately?"
+- "It's been a while! How are you doing?"
+- "How's everything going?"
+
+## Procedures
+
+### I. Warm-up (7 min)
+Objective Connection: Activate prior knowledge about social interactions
+
+Steps:
+1. PowerPoint Introduction (2 min)
+   - Display "Long Time No See" title
+   - Class brainstorm on phrase meaning
+
+2. Mime Activity (3 min)
+   - Teacher demonstrates meeting old friend
+   - Students guess scenario and phrases
+   - Encourage spontaneous responses
+
+3. Vocabulary Quickdraw (2 min)
+   - Students write/draw reunion vocabulary
+   - Partner sharing practice
+
+### II. Introduction (8 min)
+Objective Connection: Model conversation starters and listening strategies
+
+Steps:
+1. Teacher Demonstration (4 min)
+   - LET and ETA model catching up conversation
+   - Highlight greetings, questions, listening cues
+
+2. Conversation Starter Breakdown (4 min)
+   - Review common starters via PowerPoint
+   - Class pronunciation practice
+   - Paired practice with rotation
+
+### III. Main Activities (20 min)
+Objective Connection: Practice generating and responding to questions
+
+Steps:
+1. Conversation Card Activity (8 min)
+   - Paired practice with starter cards
+   - 3-minute partner rotations
+
+2. Progressive Conversation Challenge (12 min)
+   - Structured to independent practice
+   - Encourage original questions
+
+Differentiation Note:
+- Scaffolded cards for lower-level students
+- Independent question creation for advanced students
+- Mixed-proficiency pairing
+
+[Continued in next part due to length...][2025-02-19 00:24:50.153078] 
+
+=== Input Parameters ===
+{'topic': 'Long Time No See, Catching Up', 'grade': 7, 'class_duration': '45 mins', 'objectives': 'SWBAT practice catching up with an old friend\nSWBAT practice getting to know a new friend\nSWBAT use common words and phrases for expressing interest', 'co_teaching_model': 'One teach, one assist', 'classroom_setting': 'English conversation class', 'class_size': 15, 'proficiency_levels': ['Elementary'], 'materials': 'Powerpoint', 'key_vocabulary': '', 'extra_considerations': '', 'assessment_types': []}
+
+=== Refined Objectives ===
+### Refined Objectives
+- Students will be able to construct and engage in conversational dialogues about personal experiences and interests with a partner, using at least 3-4 appropriate follow-up questions
+- Students will be able to demonstrate active listening skills by paraphrasing or asking clarifying questions during peer conversations about friendship and personal background
+- Students will be able to use 5-6 context-appropriate phrases for expressing interest and maintaining conversational flow (e.g., "Really?", "Tell me more", "That sounds interesting")
+
+### Planning Considerations
+**Differentiation Opportunities**
+Lower-level students can use sentence frames and guided conversation cards, while higher-level students can be challenged to create more complex, spontaneous dialogue with fewer scaffolding supports. Visual vocabulary aids and picture prompts can help bridge comprehension gaps.
+
+**Co-teaching Integration**
+The Lead English Teacher (LET) can demonstrate conversation models and provide grammatical guidance, while the English Teaching Assistant (ETA) can facilitate pair/group activities, provide pronunciation support, and offer real-world communication examples.
+
+**Cultural Elements**
+The lesson provides opportunities to explore Taiwanese and Western conversational norms, highlighting differences in small talk, personal space, and friendship initiation strategies. Students can compare communication styles across cultures.
+
+**Assessment Approaches**
+Informal assessment will occur through teacher observation of student interactions, using a simple rubric tracking conversational skills, vocabulary usage, and engagement. A brief peer feedback component can provide additional formative assessment, allowing students to reflect on their communication effectiveness.
+
+=== Procedures ===
+### Time Distribution Overview
+Total Class Time: 45 mins
+- Warm-up: 7 minutes
+- Introduction: 8 minutes
+- Activities: 20 minutes
+- Assessment: 7 minutes
+- Closure: 3 minutes
+
+### I. Warm-up (7 min)
+Objective Connection: Activate prior knowledge about conversation skills and create a comfortable speaking environment
+
+Steps:
+1. Teacher plays quick "Two Truths and a Lie" game with co-teacher (3 min)
+   - Demonstrate interesting personal stories
+   - Model conversation follow-up phrases
+   - Show enthusiasm and active listening
+
+2. Students stand in a circle, play simplified version (4 min)
+   - Each student shares two true statements and one false statement
+   - Classmates guess which is the lie
+   - Encourages speaking practice and listening engagement
+
+### II. Introduction (8 min)
+Objective Connection: Explicitly teach conversation maintenance strategies and vocabulary
+
+Steps:
+1. PowerPoint presentation of conversation maintenance phrases (4 min)
+   - Display key phrases: "Really?", "Tell me more", "That sounds interesting"
+   - Practice pronunciation as a class
+   - Highlight intonation and stress
+
+2. Demonstrate conversation model with co-teacher (4 min)
+   - Show authentic dialogue about recent experiences
+   - Highlight use of follow-up questions
+   - Emphasize active listening techniques
+
+### III. Main Activities (20 min)
+Objective Connection: Practice constructing dialogues and applying conversation skills
+
+Steps:
+1. Guided Conversation Cards Activity (10 min)
+   - Distribute cards with conversation starter topics
+   - Students pair up and practice dialogues
+   - Rotate partners every 3-4 minutes
+
+2. "Long Time No See" Role Play (10 min)
+   - Simulate meeting an old friend scenario
+   - Students discuss recent experiences
+   - Focus on using learned phrases and follow-up questions
+
+Differentiation Note:
+- Lower-level students use sentence frames
+- Higher-level students create more spontaneous dialogue
+- Visual vocabulary aids available for support
+
+### IV. Assessment (7 min)
+Success Criteria:
+- Used 3-4 follow-up questions
+- Demonstrated active listening
+- Incorporated 2-3 conversation maintenance phrases
+
+Steps:
+1. Peer Feedback Worksheet (4 min)
+   - Students evaluate partner's conversational skills
+   - Use simple rubric with clear descriptors
+
+2. Teacher Observation (3 min)
+   - Circulate and note student interactions
+   - Provide immediate, constructive feedback
+
+### V. Closure (3 min)
+Steps:
+1. Reflect on learned conversation strategies
+2. Remind students of key takeaways about active listening and conversation flow
+
+### VI. Optional Extensions
+- Record conversations for self-reflection
+- Create dialogue journals
+- Cross-cultural communication comparison activity
+
+### Key Vocabulary Focus
+- Follow-up phrases
+- Active listening markers
+- Conversation starters
+- Personal experience description vocabulary
+
+### Materials Needed
+- Conversation starter cards
+- Peer feedback worksheets
+- PowerPoint with phrases
+- Optional: Recording device
+
+### Cultural Considerations
+- Discuss differences in conversation styles
+- Respect personal boundaries
+- Encourage authentic communication
+
+=== Components ===
+### Teaching Materials
+- Conversation Starter Cards (provide structured dialogue prompts)
+- Peer Feedback Worksheet (support self and peer assessment)
+- PowerPoint Slides (display key phrases and conversation models)
+- Whiteboard/Markers (for additional explanations or vocabulary)
+
+### Basic Vocabulary & Sentence Patterns
+Vocabulary:
+- Catch up (to discuss recent events)
+- Curious (interested in knowing more)
+- Experience (something you have done)
+- Interesting (engaging or exciting)
+- Share (to tell about something)
+
+Key Sentence Patterns:
+- "What have you been doing lately?"
+- "Tell me more about [your recent experience]."
+- "That sounds really interesting! Can you explain more?"
+
+### Reflection Questions
+1. Student Learning Outcomes:
+   "To what extent did students demonstrate improved conversational skills and active listening during today's lesson? What evidence supports this observation?"
+
+2. Teaching Effectiveness:
+   "How well did the lesson's activities support different English proficiency levels, and what adjustments might improve student engagement and learning?"
+
+3. Cultural/Language Considerations:
+   "In what ways did the lesson help students understand cross-cultural communication differences, and how can we further develop their intercultural communication awareness?"
+
+These materials and questions align with ELTP Professional Standards, focusing on language development, cultural understanding, and effective instructional strategies for 7th-grade elementary English learners.
+
+=== Final Plan ===
+Here's a starting idea for your lesson plan!
+
+# Long Time No See, Catching Up
+**Grade:** 7  
+**Time:** 45 minutes  
+**Setting:** English conversation class
+
+## Learning Objectives
+Students will be able to:
+- Construct and engage in conversational dialogues about personal experiences and interests with a partner, using at least 3-4 appropriate follow-up questions
+- Demonstrate active listening skills by paraphrasing or asking clarifying questions during peer conversations
+- Use 5-6 context-appropriate phrases for expressing interest and maintaining conversational flow
+
+## Teaching Materials
+- Conversation starter cards
+- Peer feedback worksheets
+- PowerPoint slides with key phrases
+- Whiteboard/markers
+- Optional: Recording device
+
+## Basic Vocabulary & Sentence Patterns
+**New Vocabulary:**
+- Catch up (to discuss recent events)
+- Curious (interested in knowing more)
+- Experience (something you have done)
+- Interesting (engaging or exciting)
+- Share (to tell about something)
+
+**Target Patterns:**
+- "What have you been doing lately?"
+- "Tell me more about [your recent experience]."
+- "That sounds really interesting! Can you explain more?"
+
+## Procedures
+
+### I. Warm-up (7 min)
+**Objective Connection:** Activate prior knowledge about conversation skills and create a comfortable speaking environment
+
+Steps:
+1. Teacher plays "Two Truths and a Lie" game with co-teacher (3 min)
+   - Demonstrate interesting personal stories
+   - Model conversation follow-up phrases
+   - Show enthusiasm and active listening
+
+2. Students stand in circle, play simplified version (4 min)
+   - Each student shares two true statements and one false statement
+   - Classmates guess which is the lie
+
+### II. Introduction (8 min)
+**Objective Connection:** Explicitly teach conversation maintenance strategies and vocabulary
+
+Steps:
+1. PowerPoint presentation of conversation maintenance phrases (4 min)
+   - Display key phrases: "Really?", "Tell me more", "That sounds interesting"
+   - Practice pronunciation as a class
+   - Highlight intonation and stress
+
+2. Demonstrate conversation model with co-teacher (4 min)
+   - Show authentic dialogue about recent experiences
+   - Highlight use of follow-up questions
+   - Emphasize active listening techniques
+
+### III. Main Activities (20 min)
+**Objective Connection:** Practice constructing dialogues and applying conversation skills
+
+Steps:
+1. Guided Conversation Cards Activity (10 min)
+   - Distribute cards with conversation starter topics
+   - Students pair up and practice dialogues
+   - Rotate partners every 3-4 minutes
+
+2. "Long Time No See" Role Play (10 min)
+   - Simulate meeting an old friend scenario
+   - Students discuss recent experiences
+   - Focus on using learned phrases and follow-up questions
+
+**Differentiation Note:**
+- Lower-level students use sentence frames
+- Higher-level students create more spontaneous dialogue
+- Visual vocabulary aids available for support
+
+### IV. Assessment (7 min)
+**Success Criteria:**
+- Used 3-4 follow-up questions
+- Demonstrated active listening
+- Incorporated 2-3 conversation maintenance phrases
+
+Steps:
+1. Peer Feedback Worksheet (4 min)
+2. Teacher Observation (3 min)
+
+### V. Closure (3 min)
+Steps:
+1. Reflect on learned conversation strategies
+2. Remind students of key takeaways about active listening and conversation flow
+
+### VI. Optional Extensions
+- Record conversations for self-reflection
+- Create dialogue journals
+- Cross-cultural communication comparison activity
+
+## Reflection Questions
+1. "To what extent did students demonstrate improved conversational skills and active listening during today's lesson? What evidence supports this observation?"
+2. "How well did the lesson's activities support different English proficiency levels, and what adjustments might improve student engagement and learning?"
+3. "In what ways did the lesson help students understand cross-cultural communication differences, and how can we further develop their intercultural communication awareness?"[2025-02-19 00:31:51.907676] 
+
+=== Input Parameters ===
+{'topic': 'Long Time No See, Catching Up', 'grade': 7, 'class_duration': '45', 'objectives': 'SWBAT practice catching up with an old friend\nSWBAT practice getting to know a new friend\nSWBAT use common words and phrases for expressing interest', 'co_teaching_model': 'One teach, one assist', 'classroom_setting': 'English conversation class', 'class_size': 15, 'proficiency_levels': ['Elementary'], 'materials': 'Powerpoint', 'key_vocabulary': '', 'extra_considerations': '', 'assessment_types': []}
+
+=== Refined Objectives ===
+### Refined Objectives
+- Students will be able to construct 3-5 conversational questions to reconnect with an old friend using appropriate social language and verbal expressions
+- Students will be able to demonstrate active listening skills by asking follow-up questions and showing genuine interest during paired conversational exchanges
+- Students will be able to use at least 5 common English phrases for expressing personal interest and maintaining conversational flow
+
+### Planning Considerations
+**Differentiation Opportunities**
+Lower-level students can use sentence frames and conversation prompt cards, while more advanced students can be challenged to create more complex, nuanced dialogue with additional descriptive language. Pair work can be strategically structured to mix proficiency levels.
+
+**Co-teaching Integration**
+The Lead English Teacher (LET) can model initial conversations and provide grammatical guidance, while the English Teaching Assistant (ETA) can focus on pronunciation, natural conversational flow, and providing real-world communication examples. The ETA can also circulate during pair/group activities to provide immediate feedback.
+
+**Cultural Elements**
+The lesson provides an opportunity to explore cultural differences in conversational norms, such as appropriate personal questions, body language, and communication styles between Taiwanese and Western communication patterns. Students can discuss and compare social interaction expectations.
+
+**Assessment Approaches**
+Informal formative assessment will occur through teacher observation of pair interactions, using a simple rubric tracking conversational skills, vocabulary usage, and engagement. A summative assessment could involve a structured dialogue performance where students demonstrate learned conversational techniques with a partner, evaluated against specific communication criteria.
+
+=== Procedures ===
+### Time Distribution Overview
+Total Class Time: 45 minutes
+- Warm-up: 7 minutes
+- Introduction: 10 minutes
+- Activities: 20 minutes
+- Assessment: 5 minutes
+- Closure: 3 minutes
+
+### I. Warm-up (7 min)
+Objective Connection: Activate prior knowledge about social interactions and reconnecting with friends
+
+Steps:
+1. Teacher displays a simple image of two friends meeting after a long time (2 min)
+   - Ask students: "What do you notice about how friends greet each other?"
+   - Encourage brief partner discussion about greeting behaviors
+
+2. Quick brainstorm: "What questions might you ask a friend you haven't seen in a while?" (3 min)
+   - Students write 2-3 potential questions on small whiteboards
+   - Volunteers share suggestions with class
+
+3. Language preview: Introduce 2-3 basic conversation starter phrases (2 min)
+   - Example: "Long time no see!" / "What have you been up to?"
+
+### II. Introduction (10 min)
+Objective Connection: Demonstrate culturally appropriate conversation techniques
+
+Steps:
+1. LET models a sample "catching up" conversation with ETA (4 min)
+   - Use exaggerated, clear pronunciation
+   - Demonstrate active listening cues
+   - Highlight question-asking techniques
+
+2. Conversation Technique Breakdown (4 min)
+   - Display key conversation elements on PowerPoint
+   - Discuss:
+     * Open-ended questions
+     * Follow-up question strategies
+     * Showing genuine interest
+
+3. Model conversation technique with student volunteer (2 min)
+   - Demonstrate appropriate body language
+   - Show how to ask follow-up questions
+
+### III. Main Activities (20 min)
+Objective Connection: Practice constructing and maintaining conversational exchanges
+
+Steps:
+1. Conversation Prompt Card Distribution (5 min)
+   - Provide cards with starter questions and topics
+   - Students work in pairs to practice initial exchanges
+
+2. Conversational Progression Activity (10 min)
+   - Students rotate partners every 3 minutes
+   - Each rotation requires asking increasingly personal/detailed follow-up questions
+   - Focus on maintaining conversational flow
+
+3. Cultural Comparison Moment (5 min)
+   - Brief discussion of conversation differences between Taiwanese and Western communication styles
+   - Students share observations about conversation norms
+
+Differentiation Note:
+- Lower-level students use provided sentence frames
+- Advanced students create more complex dialogue
+- Pair strategically to mix proficiency levels
+
+### IV. Assessment (5 min)
+Success Criteria:
+- Uses 3-5 conversational questions
+- Demonstrates active listening
+- Maintains conversational flow
+- Uses appropriate social language
+
+Steps:
+1. Final Paired Assessment (4 min)
+   - Students complete a structured dialogue
+   - Teachers circulate and use quick observation rubric
+
+2. Brief self-reflection on conversation skills (1 min)
+   - Students mark personal progress on simple checklist
+
+### V. Closure (3 min)
+Steps:
+1. Recap key conversation strategies
+2. Encourage students to practice outside class
+
+### VI. Optional Extensions
+- Record conversational exchanges for self-assessment
+- Create dialogue journals
+- Online language exchange activity
+
+Key Teaching Considerations:
+- Maintain high-energy, supportive environment
+- Prioritize communication over perfect grammar
+- Provide frequent positive reinforcement
+- Use natural, realistic conversation examples
+
+Materials Needed:
+- Conversation prompt cards
+- Small whiteboards
+- PowerPoint with conversation techniques
+- Observation rubric
+- Self-reflection checklist
+
+=== Components ===
+### Teaching Materials
+- Conversation prompt cards (scaffold student interactions)
+- Small whiteboards (support initial brainstorming)
+- PowerPoint slides (visual conversation technique support)
+- Observation rubric (assess student performance)
+- Self-reflection checklist (student self-assessment)
+
+### Basic Vocabulary & Sentence Patterns
+
+Essential Vocabulary:
+- Catch up (reconnect and share recent experiences)
+- Long time (period of extended separation)
+- Update (share recent information)
+- Curious (interested in knowing more)
+- Reconnect (reestablish communication)
+
+Key Sentence Patterns:
+- "What have you been doing lately?" (open-ended inquiry)
+- "Tell me more about..." (encourages detailed response)
+- "It's great to hear that..." (shows active listening)
+
+### Reflection Questions
+
+1. Student Learning Outcomes:
+"To what extent did students demonstrate improved conversational skills and active listening during today's lesson, particularly in their ability to ask follow-up questions and maintain dialogue flow?"
+
+2. Teaching Effectiveness:
+"How effectively did the lesson's differentiation strategies support students across varying English proficiency levels, and what modifications might improve future implementation?"
+
+3. Cultural/Language Considerations:
+"In what ways did the lesson help students understand culturally appropriate communication strategies, and how might these insights transfer to real-world cross-cultural interactions?"
+
+=== Final Plan ===
+Here's a starting idea for your lesson plan!
+
+# Long Time No See, Catching Up
+**Grade:** 7  
+**Time:** 45 minutes  
+**Setting:** English conversation class
+
+## Learning Objectives
+Students will be able to:
+- Construct 3-5 conversational questions to reconnect with an old friend using appropriate social language
+- Demonstrate active listening skills through follow-up questions and showing genuine interest
+- Use at least 5 common English phrases for expressing personal interest and maintaining conversation
+
+## Teaching Materials
+- Conversation prompt cards
+- Small whiteboards
+- PowerPoint slides with conversation techniques
+- Observation rubric
+- Self-reflection checklist
+
+## Basic Vocabulary & Sentence Patterns
+**New Vocabulary:**
+- Catch up (reconnect and share recent experiences)
+- Long time (period of extended separation)
+- Update (share recent information)
+- Curious (interested in knowing more)
+- Reconnect (reestablish communication)
+
+**Target Patterns:**
+- "What have you been doing lately?"
+- "Tell me more about..."
+- "It's great to hear that..."
+
+## Procedures
+
+### I. Warm-up (7 min)
+**Objective Connection:** Activate prior knowledge about social interactions and reconnecting with friends
+
+**Steps:**
+1. Display image of friends meeting (2 min)
+   - Lead class discussion on greeting behaviors
+   - Facilitate partner discussions
+
+2. Question brainstorm (3 min)
+   - Students write questions on whiteboards
+   - Share with class
+
+3. Language preview (2 min)
+   - Introduce basic conversation starters
+   - Practice pronunciation
+
+### II. Introduction (10 min)
+**Objective Connection:** Demonstrate culturally appropriate conversation techniques
+
+**Steps:**
+1. Model conversation (4 min)
+   - LET and ETA demonstrate
+   - Emphasize clear pronunciation
+   - Show active listening
+
+2. Technique breakdown (4 min)
+   - PowerPoint presentation
+   - Focus on open-ended questions
+   - Discuss follow-up strategies
+
+3. Student demonstration (2 min)
+   - Practice with volunteer
+   - Highlight body language
+
+### III. Main Activities (20 min)
+**Objective Connection:** Practice constructing and maintaining conversations
+
+**Steps:**
+1. Prompt card practice (5 min)
+2. Partner rotation activity (10 min)
+3. Cultural comparison discussion (5 min)
+
+**Differentiation Note:**
+- Provide sentence frames for lower-level students
+- Challenge advanced students with complex dialogue
+- Mix proficiency levels in pairs
+
+### IV. Assessment (5 min)
+**Success Criteria:**
+- Uses 3-5 conversational questions
+- Shows active listening
+- Maintains conversation flow
+- Uses appropriate language
+
+**Steps:**
+1. Paired dialogue assessment (4 min)
+2. Self-reflection (1 min)
+
+### V. Closure (3 min)
+**Steps:**
+1. Review key strategies
+2. Assign practice suggestions
+
+### VI. Optional Extensions
+- Conversation recordings
+- Dialogue journals
+- Online exchanges
+
+## Reflection Questions
+1. How effectively did students demonstrate improved conversational skills and active listening?
+2. What modifications could enhance differentiation strategies?
