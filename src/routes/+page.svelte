@@ -48,20 +48,17 @@
 </script>
 
 <div class="min-h-screen bg-gray-100">
-	<!-- Changed background to bg-gray-200 -->
-	<main class="container mx-auto max-w-3xl px-4 py-12">
+	<main class="container mx-auto max-w-3xl px-6 py-16">
 		<!-- Header -->
-		<div class="mb-12 text-center">
-			<h1 class="mb-4 text-4xl font-bold text-gray-900">ETA Lesson Planner</h1>
-			<p class="text-lg text-gray-700">
-				Share your lesson details, and we'll help craft a personalized teaching plan
-			</p>
+		<div class="mb-10 text-center">
+			<h1 class="mb-3 text-3xl font-bold text-gray-900">ETA Lesson Planner</h1>
+			<p class="text-lg text-gray-700">Craft personalized lesson plans effortlessly.</p>
 		</div>
 
 		<!-- Main Form -->
 		<form
 			on:submit|preventDefault={handleSubmit}
-			class="space-y-8 rounded-2xl border border-gray-200 bg-gray-50 p-8 shadow-sm"
+			class="space-y-6 rounded-lg border border-gray-200 bg-white p-8 shadow-md"
 		>
 			<!-- Topic Section -->
 			<div class="form-group">
@@ -74,12 +71,13 @@
 						class="input-field peer"
 						required
 					/>
-					<label for="topic" class="input-label"> What's your lesson topic? </label>
+					<label for="topic" class="input-label"> Lesson Topic </label>
+					<!-- Shortened label -->
 				</div>
 			</div>
 
 			<!-- Class Details Grid -->
-			<div class="grid grid-cols-1 md:grid-cols-2 md:gap-6">
+			<div class="grid grid-cols-1 md:grid-cols-2 md:gap-4">
 				<!-- Class Duration -->
 				<div class="form-group">
 					<div class="input-group">
@@ -94,20 +92,19 @@
 						<label for="classDuration" class="input-label"> Class Duration </label>
 					</div>
 				</div>
-			</div>
-
-            <!-- Grade Level -->
+				<!-- Grade Level -->
 				<div class="form-group">
 					<div class="input-group">
 						<select id="grade" bind:value={formData.grade} class="input-field peer" required>
 							{#each gradeOptions as grade}
 								<option value={grade}>Grade {grade}</option>
 							{/each}
-							<option>Univeristy</option>
+							<option>University</option>
 						</select>
 						<label for="grade" class="input-label"> Grade Level </label>
 					</div>
 				</div>
+			</div>
 
 			<!-- Co-teaching Model -->
 			<div class="form-group">
@@ -133,10 +130,11 @@
 						id="objectives"
 						bind:value={formData.objectives}
 						placeholder=" "
-						class="input-field peer h-36"
+						class="input-field peer h-28"
 						required
-					></textarea>
-					<label for="objectives" class="input-label"> Students will be able to... </label>
+					></textarea><!--Reduced textarea height h-28 -->
+					<label for="objectives" class="input-label"> Learning Objectives </label>
+					<!-- Shortened label -->
 				</div>
 			</div>
 
@@ -147,39 +145,42 @@
 						id="classDescription"
 						bind:value={formData.classDescription}
 						placeholder=""
-						class="input-field peer h-36"
+						class="input-field peer h-28"
 					></textarea>
 					<label for="classDescription" class="input-label">
-						Tell us about your class <span class="text-gray-500">(Optional)</span>
+						Classroom Context <span class="text-gray-500">(Optional)</span>
+						<!-- Shortened label -->
 					</label>
 				</div>
-				<p class="mt-80 text-gray-600">
-					Share any details that might help us create a better lesson plan - class size, student
-					levels, special considerations, etc.
+				<p class="mt-3 text-sm text-gray-600">
+					Provide details about your class - size, levels, special needs, etc.
 				</p>
 			</div>
 
 			<!-- Submit Button -->
 			<div class="form-group">
 				<button type="submit" class="submit-button" disabled={isLoading}>
-					{isLoading ? 'Creating your lesson plan...' : 'Generate Lesson Plan'}
+					{isLoading ? 'Creating Lesson...' : 'Generate Plan'}
+					<!-- Shortened button text -->
 				</button>
 			</div>
 		</form>
 
 		<!-- Error Display -->
 		{#if error}
-			<div class="mt-8 rounded-lg border-l-4 border-red-100 bg-red-50 p-4">
+			<div class="mt-6 rounded-md border-l-4 border-red-500 bg-red-50 p-4">
 				<p class="text-red-700">{error}</p>
 			</div>
 		{/if}
 
 		<!-- Results Display -->
 		{#if lessonPlan}
-			<div class="mt-8 rounded-2xl border border-gray-100 bg-gray-50 p-8 shadow-sm">
-				<!-- Changed bg-white to bg-gray-50 -->
-				<h2 class="mb-6 text-2xl font-bold text-gray-900">{lessonPlan.topic}</h2>
+			<div class="mt-8 rounded-lg border border-gray-200 bg-white p-8 shadow-sm">
+				<h2 class="mb-4 text-2xl font-bold text-gray-900">{lessonPlan.topic}</h2>
+				<!-- Reduced mb-4, text-2xl -->
 				<!-- Add lesson plan content display here -->
+				<pre>{JSON.stringify(lessonPlan, null, 2)}</pre>
+				<!-- For testing, display JSON -->
 			</div>
 		{/if}
 	</main>

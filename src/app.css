@@ -9,102 +9,97 @@
 }
 
 .form-group {
-	margin-bottom: 1rem;
+	margin-bottom: 1.5rem; /* Increased margin for better spacing */
 }
 
 .peer:placeholder-shown + label {
 	top: 1rem;
 	font-size: 1rem;
-	color: rgb(138, 162, 203);
+	color: #9ca3af; /* Adjusted to slate-400 equivalent */
 }
 
 .peer:focus + label,
 .peer:not(:placeholder-shown) + label {
-	top: -0.6rem; /* Corrected and consolidated top value */
+	top: -0.5rem; /* Slightly adjusted label position */
 	font-size: 0.875rem;
-	color: #10b981; /* Emerald-500 color for focused label */
-	background-color: rgba(249, 250, 251); /* Corrected and consolidated background-color to white */
+	color: #6366f1; /* Indigo-500 for a softer primary accent color */
+	background-color: white; /* White background */
 	padding: 0 0.25rem;
-	border-radius: 100px;
+	border-radius: 0.25rem; /* Softened label background radius */
 }
 
-
-/* Custom classes */
+/* Custom classes - Modernized */
 .input-group {
 	position: relative;
 }
 
 .input-field {
 	width: 100%;
-	border-radius: 0.75rem;
+	border-radius: 0.5rem; /* Slightly less rounded input fields */
 	border-width: 1px;
 	border-style: solid;
-    border-color: #d1d5db;
-	padding: 1rem;
-	font-size: 1.125rem;
-	line-height: 1.75rem;
-	transition-property: all;
+	border-color: #d1d5db; /* Gray-300 for softer border */
+	padding: 0.875rem 1rem; /* Adjusted padding */
+	font-size: 1rem; /* Slightly reduced font size */
+	line-height: 1.5rem; /* Adjusted line height */
+	color: #374151; /* Gray-700 for darker but soft text */
+	transition-property: border-color, box-shadow; /* Smoother transitions */
 	transition-duration: 200ms;
 	-webkit-appearance: none;
-  	-moz-appearance: none;
-  	appearance: none;
+	-moz-appearance: none;
+	appearance: none;
 }
 
 .input-field::placeholder {
-	color: #9ca3af;
+	color: #9ca3af; /* Slate-400 for placeholder */
 }
 
 .input-field:focus {
-	border-color: transparent;
+	border-color: #6366f1; /* Indigo-500 for focus border */
 	outline: none;
-    box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.5);
+	box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.25); /* Indigo-500 with opacity for focus shadow */
 }
-
 
 .input-label {
 	position: absolute;
 	top: 1rem;
 	left: 1rem;
-	background-color: 249 250 251;
+	background-color: white; /* White background */
 	padding-left: 0.25rem;
 	padding-right: 0.25rem;
-	font-size: 1.125rem;
-	line-height: 1.75rem;
-	color: #9ca3af;
+	font-size: 1rem; /* Slightly reduced label font size */
+	line-height: 1.5rem; /* Adjusted line height */
+	color: #9ca3af; /* Slate-400 for label text */
 	transition-property: all;
 	transition-duration: 200ms;
-    border-radius: 100px;
+	border-radius: 0.25rem; /* Softened label radius */
 }
-
 
 .submit-button {
 	width: 100%;
-	border-radius: 0.75rem;
-    background-color: #10b981;
-	padding-left: 1.5rem;
-	padding-right: 1.5rem;
-	padding-top: 1rem;
-	padding-bottom: 1rem;
-	font-size: 1.125rem;
-	line-height: 1.75rem;
+	border-radius: 0.5rem; /* Slightly less rounded button */
+	background-color: #6366f1; /* Indigo-500 for button background */
+	padding: 0.875rem 1.5rem; /* Adjusted button padding */
+	font-size: 1rem; /* Slightly reduced button font size */
+	line-height: 1.5rem; /* Adjusted line height */
 	font-weight: 500;
 	color: #ffffff;
-	transition-property: all;
+	transition-property: background-color, box-shadow; /* Smoother transitions */
 	transition-duration: 200ms;
 	cursor: pointer;
 	border: none;
 	-webkit-appearance: none;
-  	-moz-appearance: none;
-  	appearance: none;
+	-moz-appearance: none;
+	appearance: none;
 }
 
 .submit-button:hover {
-    background-color: #059669;
+	background-color: #4f46e5; /* Indigo-600 for hover */
 }
 
 .submit-button:focus {
 	outline: none;
-    box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.5);
+	box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.5); /* Indigo-500 with opacity for focus shadow */
 }
 
 .submit-button:disabled {
