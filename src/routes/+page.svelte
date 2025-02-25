@@ -2,6 +2,7 @@
 <script>
 	import { marked } from 'marked'; // Import marked
 	import ProgressBar from '$lib/components/ProgressBar.svelte';
+    
 
 	let formData = {
 		topic: '',
