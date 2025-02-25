@@ -30,6 +30,9 @@ export async function POST({ request }) {
 		// Parse the request body as JSON. This should contain the lesson details from the form.
 		const formData = await request.json();
 
+		// Log formData for debugging
+		console.log('formData received:', formData);
+
 		// Extract the 'phase' header from the request. This indicates which phase of the lesson plan to generate.
 		const phaseName = request.headers.get('phase');
 
@@ -74,6 +77,9 @@ export async function POST({ request }) {
 				return json({ error: 'Invalid phase name' }, { status: 400 });
 		}
 
+		// Log prompt before sending to LLM
+		// console.log(`Phase: ${phaseName} - Prompt being sent to LLM:`, prompt);
+
 		// Send the prompt to the Anthropic API using the configured model and parameters.
 		const msg = await anthropic.messages.create({
 			model: model,
@@ -83,6 +89,9 @@ export async function POST({ request }) {
 
 		// Extract the generated content from the Anthropic API response.
 		let content = msg.content[0].text;
+
+		// Log LLM output
+		console.log(`Phase: ${phaseName} - LLM Output:`, content);
 
 		// Return the generated content in a JSON response, including the phase name for frontend processing.
 		return json({
