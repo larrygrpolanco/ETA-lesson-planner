@@ -78,7 +78,7 @@ export async function POST({ request }) {
 		}
 
 		// Log prompt before sending to LLM
-		// console.log(`Phase: ${phaseName} - Prompt being sent to LLM:`, prompt);
+		console.log(`Phase: ${phaseName} - Prompt being sent to LLM:`, prompt);
 
 		// Send the prompt to the Anthropic API using the configured model and parameters.
 		const msg = await anthropic.messages.create({

@@ -131,7 +131,7 @@
 	<main class="container mx-auto max-w-3xl px-6 py-16">
 		<!-- Header -->
 		<div class="mb-10 text-center">
-			<h1 class="mb-3 text-3xl font-bold text-gray-900">ETA Lesson Planner</h1>
+			<h1 class="mb-3 text-3xl font-bold text-gray-900">Fulbright Lesson Planner</h1>
 			<p class="text-lg text-gray-700">Craft personalized lesson plans effortlessly.</p>
 		</div>
 
