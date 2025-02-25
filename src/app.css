@@ -187,3 +187,83 @@
 	background-color: #f0f0f0;
 	border-radius: 3px;
 }
+
+
+.dot-animation {
+    display: inline-block; /* Keep dots in line with text */
+}
+
+.dot-animation span {
+    display: inline-block; /* Make spans inline blocks for animation */
+    opacity: 0; /* Initially hide dots */
+    animation: dot-pulse 1.5s infinite; /* Apply animation */
+}
+
+.dot-animation span:nth-child(2) {
+    animation-delay: 0.5s; /* Delay for the second dot */
+}
+
+.dot-animation span:nth-child(3) {
+    animation-delay: 1s; /* Delay for the third dot */
+}
+
+@keyframes dot-pulse {
+    0% { opacity: 0; } /* Start invisible */
+    50% { opacity: 1; } /* Fade in */
+    100% { opacity: 0; } /* Fade out, looping */
+}
+/* Markdown styling */
+.markdown-body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  word-wrap: break-word;
+}
+
+.markdown-body h1 {
+  padding-bottom: 0.3em;
+  font-size: 2em;
+  border-bottom: 1px solid #eaecef;
+  margin-top: 24px;
+  margin-bottom: 16px;
+}
+
+.markdown-body h2 {
+  padding-bottom: 0.3em;
+  font-size: 1.5em;
+  border-bottom: 1px solid #eaecef;
+  margin-top: 24px;
+  margin-bottom: 16px;
+}
+
+.markdown-body ul,
+.markdown-body ol {
+  padding-left: 2em;
+  margin-top: 0;
+  margin-bottom: 16px;
+}
+
+.markdown-body li {
+  margin-bottom: 0.5em;
+}
+
+.markdown-body code {
+  padding: 0.2em 0.4em;
+  margin: 0;
+  background-color: rgba(175,184,193,0.2);
+  border-radius: 6px;
+  font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
+}
+
+.markdown-body pre {
+  padding: 16px;
+  overflow: auto;
+  background-color: #f6f8fa;
+  border-radius: 6px;
+  margin-bottom: 16px;
+}
+
+.markdown-body pre code {
+  background-color: transparent;
+  padding: 0;
+}

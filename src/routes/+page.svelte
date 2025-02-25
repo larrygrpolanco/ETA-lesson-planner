@@ -81,7 +81,7 @@
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/json',
-						phase: phase.name
+						phase: phase.name // <--- ADD THIS HEADER to send phase name
 					},
 					body: JSON.stringify(formData)
 				});
@@ -90,9 +90,8 @@
 				const data = await response.json();
 
 				if (data.phase.name === 'Creating Final Plan') {
-					// Last phase returns final lesson plan
-					finalLessonPlanOutput = data.finalLessonPlan;
-					lessonPlan = finalLessonPlanOutput; // For existing logic
+					finalLessonPlanOutput = data.phase.content;
+					lessonPlan = finalLessonPlanOutput;
 				}
 
 				phases = phases.map((p, index) => {
@@ -231,7 +230,13 @@
 
 			<div>
 				<button type="submit" class="submit-button" disabled={isLoading}>
-					{isLoading ? 'Creating Lesson...' : 'Generate Plan'}
+					{#if isLoading}
+						Creating Lesson<span class="dot-animation"
+							><span>.</span><span>.</span><span>.</span></span
+						>
+					{:else}
+						Generate Plan
+					{/if}
 				</button>
 			</div>
 		</form>
@@ -247,31 +252,31 @@
 		{#if phases.some((phase) => phase.completed) || finalLessonPlanOutput}
 			<div class>
 				<!-- Preliminary Phases - Collapsible -->
-				{#each phases as phase}
+				{#each phases as phase, index}
 					{#if phase.completed || phase.isLoading || phase.content}
-						<!-- Show phases as they complete or load -->
-						<details class="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
-							<!-- Removed: open={phase.completed || phase.isLoading} -->
-							<summary class="font-semibold text-gray-900 marker:text-sky-500">
-								{phase.name}
-								{#if phase.isLoading}
-									<div class="spinner"></div>
-								{/if}
-							</summary>
-							<div class="markdown-body mt-2 text-gray-700">
-								{#if phase.content}
-									{#if typeof phase.content === 'string'}
-										{@html marked.parse(phase.content)}
-									{:else if phase.content.content}
-										{@html marked.parse(phase.content.content)}
-									{:else if phase.content.fullPlan}
-										{@html marked.parse(phase.content.fullPlan)}
+						{#if !(finalLessonPlanOutput && index === phases.length - 1)}
+							<details class="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+								<summary class="font-semibold text-gray-900 marker:text-sky-500">
+									{phase.name}
+									{#if phase.isLoading}
+										<div class="spinner"></div>
 									{/if}
-								{:else if phase.isLoading}
-									<p>Processing...</p>
-								{/if}
-							</div>
-						</details>
+								</summary>
+								<div class="markdown-body mt-2 text-gray-700">
+									{#if phase.content}
+										{#if typeof phase.content === 'string'}
+											{@html marked.parse(phase.content)}
+										{:else if phase.content.content}
+											{@html marked.parse(phase.content.content)}
+										{:else if phase.content.fullPlan}
+											{@html marked.parse(phase.content.fullPlan)}
+										{/if}
+									{:else if phase.isLoading}
+										<p>Processing...</p>
+									{/if}
+								</div>
+							</details>
+						{/if}
 					{/if}
 				{/each}
 
@@ -279,10 +284,10 @@
 				{#if finalLessonPlanOutput}
 					<div class="rounded-lg border border-gray-200 bg-white p-8 shadow-sm">
 						<h2 class="mb-4 text-2xl font-bold text-gray-900">
-							Final Lesson Plan: {finalLessonPlanOutput.topic}
+							Final Lesson Plan: {formData.topic}
 						</h2>
 						<div class="markdown-body">
-							{@html marked.parse(finalLessonPlanOutput.finalPlan)}
+							{@html marked.parse(finalLessonPlanOutput)}
 						</div>
 						<div class="mt-4">
 							<button class="submit-button" on:click={copyToClipboard}>Copy to Clipboard</button>
