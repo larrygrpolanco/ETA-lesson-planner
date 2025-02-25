@@ -1,6 +1,7 @@
 <!-- // src/routes/+page.svelte -->
 <script>
 	import { marked } from 'marked'; // Import marked
+	import ProgressBar from '$lib/components/ProgressBar.svelte';
 
 	let formData = {
 		topic: '',
@@ -231,9 +232,7 @@
 			<div>
 				<button type="submit" class="submit-button" disabled={isLoading}>
 					{#if isLoading}
-						Creating Lesson<span class="dot-animation"
-							><span>.</span><span>.</span><span>.</span></span
-						>
+						Creating Lesson
 					{:else}
 						Generate Plan
 					{/if}
@@ -249,43 +248,12 @@
 		{/if}
 
 		<!-- Results Display Section -->
-		{#if phases.some((phase) => phase.completed) || finalLessonPlanOutput}
+		{#if isLoading || finalLessonPlanOutput}
 			<div class>
-				<!-- Preliminary Phases - Collapsible -->
-				{#each phases as phase, index}
-					{#if phase.completed || phase.isLoading || phase.content}
-						{#if !(finalLessonPlanOutput && index === phases.length - 1)}
-							<details class="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
-								<summary class="font-semibold text-gray-900 marker:text-sky-500">
-									{phase.name}
-									{#if phase.isLoading}
-										<div class="spinner"></div>
-									{/if}
-								</summary>
-								<div class="markdown-body mt-2 text-gray-700">
-									{#if phase.content}
-										{#if typeof phase.content === 'string'}
-											{@html marked.parse(phase.content)}
-										{:else if phase.content.content}
-											{@html marked.parse(phase.content.content)}
-										{:else if phase.content.fullPlan}
-											{@html marked.parse(phase.content.fullPlan)}
-										{/if}
-									{:else if phase.isLoading}
-										<p>Processing...</p>
-									{/if}
-								</div>
-							</details>
-						{/if}
-					{/if}
-				{/each}
-
+				<ProgressBar {phases} />
 				<!-- Final Lesson Plan - Not Collapsible -->
 				{#if finalLessonPlanOutput}
 					<div class="rounded-lg border border-gray-200 bg-white p-8 shadow-sm">
-						<h2 class="mb-4 text-2xl font-bold text-gray-900">
-							Final Lesson Plan: {formData.topic}
-						</h2>
 						<div class="markdown-body">
 							{@html marked.parse(finalLessonPlanOutput)}
 						</div>
