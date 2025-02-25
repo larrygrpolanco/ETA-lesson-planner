@@ -1,4 +1,3 @@
-<!-- // src/routes/+page.svelte -->
 <script>
 	import ETALessonForm from '$lib/components/ETALessonForm.svelte';
 	import EMILessonForm from '$lib/components/EMILessonForm.svelte';
@@ -26,24 +25,33 @@
 		</div>
 
 		<!-- Tabs -->
-		<div class="mb-6 flex border-b border-gray-200">
+		<div class="mb-6 flex justify-center">
+			<!-- Removed border-b from here -->
 			<button
-				class="px-4 py-2 text-sm font-medium focus:outline-none {activeTab === 'eta'
-					? 'border-b-2 border-blue-500 text-blue-500'
+				class="<!-- Rounded top corners --> <!-- Smooth --> <!-- Subtle hover
+				background --> rounded-t-md px-8 py-2 text-xl
+				font-medium transition-colors duration-200 hover:bg-gray-50 focus:outline-none
+				{activeTab === 'eta'
+					? 'border-b-2 border-blue-500 bg-gray-100 text-blue-500' /* Active tab background */
 					: 'text-gray-500 hover:text-gray-700'}"
 				on:click={() => (activeTab = 'eta')}
 			>
-				ETA Lesson Plan
+				ETA
 			</button>
 			<button
-				class="px-4 py-2 text-sm font-medium focus:outline-none {activeTab === 'emi'
-					? 'border-b-2 border-blue-500 text-blue-500'
+				class="<!-- Rounded top corners --> <!-- Smooth --> <!-- Subtle hover
+				background --> rounded-t-md px-8 py-2 text-xl
+				font-medium transition-colors duration-200 hover:bg-gray-50 focus:outline-none
+				{activeTab === 'emi'
+					? 'border-b-2 border-indigo-500 bg-gray-100 text-indigo-500' /* Active tab background */
 					: 'text-gray-500 hover:text-gray-700'}"
 				on:click={() => (activeTab = 'emi')}
 			>
-				EMI Lesson Plan
+				EMI
 			</button>
 		</div>
+		<div class="border-b border-gray-200"></div>
+		<!-- Added border-b here separately -->
 
 		<!-- ETA Form -->
 		{#if activeTab === 'eta'}

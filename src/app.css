@@ -28,6 +28,16 @@
 	border-radius: 0.25rem; /* Softened label background radius */
 }
 
+/* ETA Form Specific Styles */
+.eta-form .peer:focus + label,
+.eta-form .peer:not(:placeholder-shown) + label {
+	color: #3b82f6; /* Blue-500 for ETA forms */
+}
+
+.eta-form .input-field:focus {
+	border-color: #3b82f6; /* Blue-500 for ETA forms */
+}
+
 /* Custom classes - Modernized */
 .input-group {
 	position: relative;
@@ -55,7 +65,12 @@
 }
 
 .input-field:focus {
-	border-color: #6366f1; /* Indigo-500 for focus border */
+	border-color: #6366f1; /* Indigo-500 for EMI forms (default) */
+	outline: none;
+	box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.25); /* Indigo-500 with opacity for focus shadow */
+}
+.eta-form .input-field:focus {
+	border-color: #3b82f6; /* Blue-500 for ETA forms */
 	outline: none;
 	box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.25); /* Indigo-500 with opacity for focus shadow */
 }
@@ -78,7 +93,7 @@
 .submit-button {
 	width: 100%;
 	border-radius: 0.5rem; /* Slightly less rounded button */
-	background-color: #6366f1; /* Indigo-500 for button background */
+	background-color: #0284c7; /* sky-600 for button background */
 	padding: 0.875rem 1.5rem; /* Adjusted button padding */
 	font-size: 1rem; /* Slightly reduced button font size */
 	line-height: 1.5rem; /* Adjusted line height */
@@ -94,12 +109,12 @@
 }
 
 .submit-button:hover {
-	background-color: #4f46e5; /* Indigo-600 for hover */
+	background-color: #0369a1; /* Sky-700 for hover */
 }
 
 .submit-button:focus {
 	outline: none;
-	box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.5); /* Indigo-500 with opacity for focus shadow */
+	box-shadow: 0 0 0 2px rgba(0, 194, 224, 0.5); /* Sky-500 with opacity for focus shadow */
 }
 
 .submit-button:disabled {
@@ -190,7 +205,7 @@
 	margin-bottom: 1rem; /* Spacing after code blocks */
 }
 
-.markdown-body pre code {
+.markdown-body pre > code {
 	background-color: transparent; /* Ensure code inside pre doesn't have background */
 	padding: 0; /* Reset padding for code inside pre */
 }

@@ -26,7 +26,7 @@
 	{/if}
 	<div class="h-2.5 w-full rounded-full bg-gray-200">
 		<div
-			class="h-2.5 rounded-full bg-indigo-600 transition-all duration-500"
+			class="h-2.5 rounded-full bg-sky-600 transition-all duration-500"
 			style="width: {progressPercentage}%"
 		></div>
 	</div>

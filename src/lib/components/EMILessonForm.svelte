@@ -1,4 +1,3 @@
-<!-- // src/lib/components/EMILessonForm.svelte -->
 <script>
 	import { marked } from 'marked';
 	import ProgressBar from '$lib/components/ProgressBar.svelte';
@@ -115,107 +114,109 @@
 	}
 </script>
 
-<form
-	on:submit|preventDefault={handleSubmit}
-	class="space-y-6 rounded-lg border border-gray-200 bg-white p-8 shadow-md"
->
-	<div class="form-group">
-		<div class="input-group">
-			<input
-				type="text"
-				id="emi-topic"
-				bind:value={formData.topic}
-				placeholder=""
-				class="input-field peer"
-				required
-			/>
-			<label for="emi-topic" class="input-label"> Lesson Topic (EMI) </label>
-		</div>
-	</div>
-
-	<div class="grid grid-cols-1 md:grid-cols-2 md:gap-4">
+<div class="emi-form">
+	<form
+		on:submit|preventDefault={handleSubmit}
+		class="space-y-6 rounded-lg border border-gray-200 bg-white p-8 shadow-md"
+	>
 		<div class="form-group">
 			<div class="input-group">
 				<input
 					type="text"
-					id="emi-classDuration"
-					bind:value={formData.classDuration}
+					id="emi-topic"
+					bind:value={formData.topic}
 					placeholder=""
 					class="input-field peer"
 					required
 				/>
-				<label for="emi-classDuration" class="input-label"> Class Duration (EMI) </label>
+				<label for="emi-topic" class="input-label"> Lesson Topic</label>
 			</div>
 		</div>
+
+		<div class="grid grid-cols-1 md:grid-cols-2 md:gap-4">
+			<div class="form-group">
+				<div class="input-group">
+					<input
+						type="text"
+						id="emi-classDuration"
+						bind:value={formData.classDuration}
+						placeholder=""
+						class="input-field peer"
+						required
+					/>
+					<label for="emi-classDuration" class="input-label"> Class Duration</label>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="input-group">
+					<select id="emi-grade" bind:value={formData.grade} class="input-field peer" required>
+						{#each gradeOptions as grade}
+							<option value={grade}>Grade {grade}</option>
+						{/each}
+						<option>University</option>
+					</select>
+					<label for="emi-grade" class="input-label"> Grade Level</label>
+				</div>
+			</div>
+		</div>
+
 		<div class="form-group">
 			<div class="input-group">
-				<select id="emi-grade" bind:value={formData.grade} class="input-field peer" required>
-					{#each gradeOptions as grade}
-						<option value={grade}>Grade {grade}</option>
+				<select
+					id="emi-coTeachingModel"
+					bind:value={formData.coTeachingModel}
+					class="input-field peer"
+					required
+				>
+					{#each coTeachingOptions as option}
+						<option value={option}>{option}</option>
 					{/each}
-					<option>University</option>
 				</select>
-				<label for="emi-grade" class="input-label"> Grade Level (EMI) </label>
+				<label for="emi-coTeachingModel" class="input-label"> Co-teaching Model</label>
 			</div>
 		</div>
-	</div>
 
-	<div class="form-group">
-		<div class="input-group">
-			<select
-				id="emi-coTeachingModel"
-				bind:value={formData.coTeachingModel}
-				class="input-field peer"
-				required
-			>
-				{#each coTeachingOptions as option}
-					<option value={option}>{option}</option>
-				{/each}
-			</select>
-			<label for="emi-coTeachingModel" class="input-label"> Co-teaching Model (EMI) </label>
+		<div class="form-group">
+			<div class="input-group">
+				<textarea
+					id="emi-objectives"
+					bind:value={formData.objectives}
+					placeholder=" "
+					class="input-field peer h-28"
+					required
+				></textarea>
+				<label for="emi-objectives" class="input-label"> Learning Objectives</label>
+			</div>
 		</div>
-	</div>
 
-	<div class="form-group">
-		<div class="input-group">
-			<textarea
-				id="emi-objectives"
-				bind:value={formData.objectives}
-				placeholder=" "
-				class="input-field peer h-28"
-				required
-			></textarea>
-			<label for="emi-objectives" class="input-label"> Learning Objectives (EMI) </label>
+		<div class="form-group">
+			<div class="input-group">
+				<textarea
+					id="emi-classDescription"
+					bind:value={formData.classDescription}
+					placeholder=""
+					class="input-field peer h-28"
+				></textarea>
+				<label for="emi-classDescription" class="input-label">
+					Classroom Context <span class="text-gray-500">(Optional)</span>
+				</label>
+			</div>
+			<p class="mt-3 text-sm text-gray-600">
+				Provide details about your class - size, levels, special needs, etc.
+			</p>
 		</div>
-	</div>
 
-	<div class="form-group">
-		<div class="input-group">
-			<textarea
-				id="emi-classDescription"
-				bind:value={formData.classDescription}
-				placeholder=""
-				class="input-field peer h-28"
-			></textarea>
-			<label for="emi-classDescription" class="input-label">
-				Classroom Context (EMI) <span class="text-gray-500">(Optional)</span>
-			</label>
+		<div>
+			<button type="submit" class="submit-button" disabled={isLoading}>
+				{#if isLoading}
+					Creating EMI Lesson
+				{:else}
+					Generate EMI Plan
+				{/if}
+			</button>
 		</div>
-		<p class="mt-3 text-sm text-gray-600">
-			Provide details about your class - size, levels, special needs, etc.
-		</p>
-	</div>
-
-	<div>
-		<button type="submit" class="submit-button" disabled={isLoading}>
-			{#if isLoading}
-				Creating EMI Lesson
-			{:else}
-				Generate EMI Plan
-			{/if}
-		</button>
-	</div>
-</form>
+	</form>
+</div>
 
 <!-- EMI Error Display -->
 {#if error}
