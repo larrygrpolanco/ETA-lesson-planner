@@ -104,11 +104,11 @@
 			navigator.clipboard
 				.writeText(JSON.stringify(finalLessonPlanOutput, null, 2))
 				.then(() => {
-					alert('EMI Lesson plan copied to clipboard!');
+					alert('Workshop plan copied to clipboard!');
 				})
 				.catch((err) => {
 					console.error('Failed to copy: ', err);
-					alert('Failed to copy EMI lesson plan to clipboard.');
+					alert('Failed to copy Workshop plan to clipboard.');
 				});
 		}
 	}
@@ -117,7 +117,7 @@
 <div class="emi-form">
 	<form
 		on:submit|preventDefault={handleSubmit}
-		class="space-y-6 rounded-lg border border-gray-200 bg-white p-8 shadow-md"
+		class="space-y-6 border border-gray-200 bg-white p-8 shadow-md"
 	>
 		<div class="form-group">
 			<div class="input-group">
@@ -209,7 +209,7 @@
 		<div>
 			<button type="submit" class="submit-button" disabled={isLoading}>
 				{#if isLoading}
-					Creating EMI Lesson
+					Creating Workshop Plan
 				{:else}
 					Generate EMI Plan
 				{/if}
