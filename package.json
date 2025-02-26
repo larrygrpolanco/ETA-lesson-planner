@@ -36,6 +36,7 @@
 		"encoding": "^0.1.13",
 		"github-markdown-css": "^5.8.1",
 		"lucide-svelte": "^0.475.0",
-		"marked": "^15.0.7"
+		"marked": "^15.0.7",
+		"remove-markdown": "^0.6.0"
 	}
 }

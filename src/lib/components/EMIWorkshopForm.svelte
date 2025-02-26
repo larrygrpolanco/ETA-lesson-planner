@@ -1,7 +1,9 @@
 <!-- EMIWorkshopForm.svelte -->
+
 <script>
 	import { marked } from 'marked';
 	import ProgressBar from '$lib/components/ProgressBar.svelte';
+	import removeMd from 'remove-markdown';
 
 	// Define audience options specifically for EMI workshops
 	let audienceOptions = [
@@ -114,15 +116,18 @@
 	}
 
 	function copyToClipboard() {
-		if (finalWorkshopPlanOutput) {
+		if (finalLessonPlanOutput) {
+			// Convert markdown to plain text
+			const plainText = removeMd(finalLessonPlanOutput);
+
 			navigator.clipboard
-				.writeText(finalWorkshopPlanOutput)
+				.writeText(plainText)
 				.then(() => {
-					alert('Workshop plan copied to clipboard!');
+					alert('Lesson plan copied to clipboard!');
 				})
 				.catch((err) => {
 					console.error('Failed to copy: ', err);
-					alert('Failed to copy workshop plan to clipboard.');
+					alert('Failed to copy lesson plan to clipboard.');
 				});
 		}
 	}
@@ -131,6 +136,7 @@
 <div class="emi-form">
 	<form
 		on:submit|preventDefault={handleSubmit}
+		autocomplete="off"
 		class="space-y-6 border border-gray-200 bg-white p-8 shadow-md transition-colors duration-500 dark:border-slate-700 dark:bg-slate-800"
 	>
 		<div class="form-group">

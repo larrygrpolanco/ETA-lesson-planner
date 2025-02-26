@@ -3,6 +3,7 @@
 <script>
 	import { marked } from 'marked';
 	import ProgressBar from '$lib/components/ProgressBar.svelte';
+	import removeMd from 'remove-markdown';
 
 	export let coTeachingOptions; // Receive these as props
 	export let gradeOptions; // Receive these as props
@@ -110,8 +111,11 @@
 
 	function copyToClipboard() {
 		if (finalLessonPlanOutput) {
+			// Convert markdown to plain text
+			const plainText = removeMd(finalLessonPlanOutput);
+
 			navigator.clipboard
-				.writeText(finalLessonPlanOutput)
+				.writeText(plainText)
 				.then(() => {
 					alert('Lesson plan copied to clipboard!');
 				})
@@ -126,6 +130,7 @@
 <div class="eta-form">
 	<form
 		on:submit|preventDefault={handleSubmit}
+		autocomplete="off"
 		class="space-y-6 border border-gray-200 bg-white p-8 shadow-md transition-colors duration-500 dark:border-slate-700 dark:bg-slate-800"
 	>
 		<div class="form-group">
