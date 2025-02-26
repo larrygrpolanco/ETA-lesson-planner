@@ -1,133 +1,132 @@
 <!-- ETALessonForm.svelte -->
 
 <script>
-    import { marked } from 'marked';
-    import ProgressBar from '$lib/components/ProgressBar.svelte';
+	import { marked } from 'marked';
+	import ProgressBar from '$lib/components/ProgressBar.svelte';
 
-    export let coTeachingOptions; // Receive these as props
-    export let gradeOptions; // Receive these as props
+	export let coTeachingOptions; // Receive these as props
+	export let gradeOptions; // Receive these as props
 
-    let formData = {
-        topic: '',
-        grade: 1,
-        classDuration: '',
-        coTeachingModel: 'One teach, one observe',
-        objectives: '',
-        classDescription: ''
-    };
+	let formData = {
+		topic: '',
+		grade: 1,
+		classDuration: '',
+		coTeachingModel: 'One teach, one observe',
+		objectives: '',
+		classDescription: ''
+	};
 
-    let lessonPlan = null;
-    let isLoading = false;
-    let error = null;
-    let phases = [
-        {
-            name: 'Refining Objectives',
-            key: 'objectives',
-            content: null,
-            isLoading: false,
-            completed: false
-        },
-        {
-            name: 'Generating Activities',
-            key: 'activities',
-            content: null,
-            isLoading: false,
-            completed: false
-        },
-        {
-            name: 'Preparing Components',
-            key: 'components',
-            content: null,
-            isLoading: false,
-            completed: false
-        },
-        {
-            name: 'Creating Final Plan',
-            key: 'finalPlan',
-            content: null,
-            isLoading: false,
-            completed: false
-        }
-    ];
-    let finalLessonPlanOutput = null;
+	let lessonPlan = null;
+	let isLoading = false;
+	let error = null;
+	let phases = [
+		{
+			name: 'Refining Objectives',
+			key: 'objectives',
+			content: null,
+			isLoading: false,
+			completed: false
+		},
+		{
+			name: 'Generating Activities',
+			key: 'activities',
+			content: null,
+			isLoading: false,
+			completed: false
+		},
+		{
+			name: 'Preparing Components',
+			key: 'components',
+			content: null,
+			isLoading: false,
+			completed: false
+		},
+		{
+			name: 'Creating Final Plan',
+			key: 'finalPlan',
+			content: null,
+			isLoading: false,
+			completed: false
+		}
+	];
+	let finalLessonPlanOutput = null;
 
-    async function handleSubmit() {
-        isLoading = true;
-        error = null;
-        lessonPlan = null;
-        finalLessonPlanOutput = null;
-        phases = phases.map((phase) => ({
-            ...phase,
-            content: null,
-            isLoading: false,
-            completed: false
-        }));
+	async function handleSubmit() {
+		isLoading = true;
+		error = null;
+		lessonPlan = null;
+		finalLessonPlanOutput = null;
+		phases = phases.map((phase) => ({
+			...phase,
+			content: null,
+			isLoading: false,
+			completed: false
+		}));
 
-        for (let i = 0; i < phases.length; i++) {
-            const phase = phases[i];
-            phases = phases.map((p, index) => (index === i ? { ...p, isLoading: true } : p));
-            phases = [...phases];
+		for (let i = 0; i < phases.length; i++) {
+			const phase = phases[i];
+			phases = phases.map((p, index) => (index === i ? { ...p, isLoading: true } : p));
+			phases = [...phases];
 
-            try {
-                const response = await fetch('/api/generate-eta-lesson', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', phase: phase.name },
-                    body: JSON.stringify({
-                        ...formData,
-                        phases: phases.map(p => ({
-                            key: p.key,
-                            name: p.name,
-                            content: p.content,
-                            completed: p.completed
-                        }))
-                    })
-                });
+			try {
+				const response = await fetch('/api/generate-eta-lesson', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json', phase: phase.name },
+					body: JSON.stringify({
+						...formData,
+						phases: phases.map((p) => ({
+							key: p.key,
+							name: p.name,
+							content: p.content,
+							completed: p.completed
+						}))
+					})
+				});
 
-                if (!response.ok) throw new Error(`ETA Failed to generate ${phase.name}`);
-                const data = await response.json();
+				if (!response.ok) throw new Error(`ETA Failed to generate ${phase.name}`);
+				const data = await response.json();
 
-                if (data.phase.name === 'Creating Final Plan') {
-                    finalLessonPlanOutput = data.phase.content;
-                    lessonPlan = finalLessonPlanOutput;
-                }
+				if (data.phase.name === 'Creating Final Plan') {
+					finalLessonPlanOutput = data.phase.content;
+					lessonPlan = finalLessonPlanOutput;
+				}
 
-                phases = phases.map((p, index) => {
-                    if (index === i) {
-                        return { ...p, content: data.phase.content, isLoading: false, completed: true };
-                    }
-                    return p;
-                });
-                phases = [...phases];
-            } catch (err) {
-                error = err.message;
-                phases = phases.map((p) => ({ ...p, isLoading: false }));
-                phases = [...phases];
-                break;
-            }
-        }
-        isLoading = false;
-    }
+				phases = phases.map((p, index) => {
+					if (index === i) {
+						return { ...p, content: data.phase.content, isLoading: false, completed: true };
+					}
+					return p;
+				});
+				phases = [...phases];
+			} catch (err) {
+				error = err.message;
+				phases = phases.map((p) => ({ ...p, isLoading: false }));
+				phases = [...phases];
+				break;
+			}
+		}
+		isLoading = false;
+	}
 
-    function copyToClipboard() {
-        if (finalLessonPlanOutput) {
-            navigator.clipboard
-                .writeText(finalLessonPlanOutput)
-                .then(() => {
-                    alert('Lesson plan copied to clipboard!');
-                })
-                .catch((err) => {
-                    console.error('Failed to copy: ', err);
-                    alert('Failed to copy lesson plan to clipboard.');
-                });
-        }
-    }
+	function copyToClipboard() {
+		if (finalLessonPlanOutput) {
+			navigator.clipboard
+				.writeText(finalLessonPlanOutput)
+				.then(() => {
+					alert('Lesson plan copied to clipboard!');
+				})
+				.catch((err) => {
+					console.error('Failed to copy: ', err);
+					alert('Failed to copy lesson plan to clipboard.');
+				});
+		}
+	}
 </script>
-
 
 <div class="eta-form">
 	<form
 		on:submit|preventDefault={handleSubmit}
-		class="space-y-6  border border-gray-200 bg-white p-8 shadow-md"
+		class="space-y-6 border border-gray-200 bg-white p-8 shadow-md transition-colors duration-500 dark:border-slate-700 dark:bg-slate-800"
 	>
 		<div class="form-group">
 			<div class="input-group">
@@ -228,10 +227,10 @@
 	</form>
 </div>
 
-<!-- ETA Error Display -->
+<!-- Error Display -->
 {#if error}
-	<div class="mt-6 rounded-md border-l-4 border-red-500 bg-red-50 p-4">
-		<p class="text-red-700">{error}</p>
+	<div class="mt-6 rounded-md border-l-4 border-red-500 bg-red-50 p-4 dark:bg-red-900/20">
+		<p class="text-red-700 dark:text-red-400">{error}</p>
 	</div>
 {/if}
 
@@ -241,13 +240,15 @@
 		<ProgressBar {phases} />
 		<!-- Final Lesson Plan - Not Collapsible -->
 		{#if finalLessonPlanOutput}
-			<div class="rounded-lg border border-gray-200 bg-white p-8 shadow-sm">
-				<div class="markdown-body">
+			<div
+				class="rounded-lg border border-gray-200 bg-white p-8 shadow-sm transition-colors duration-500 dark:border-slate-700 dark:bg-slate-800"
+			>
+				<div class="markdown-body dark:bg-gray-800">
 					{@html marked.parse(finalLessonPlanOutput)}
 				</div>
 				<div class="mt-4">
 					<button class="submit-button" on:click={copyToClipboard}
-						>Copy ETA Plan to Clipboard</button
+						>Copy Lesson Plan to Clipboard</button
 					>
 				</div>
 			</div>

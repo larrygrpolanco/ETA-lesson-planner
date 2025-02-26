@@ -4,7 +4,13 @@
 	import ProgressBar from '$lib/components/ProgressBar.svelte';
 
 	// Define audience options specifically for EMI workshops
-	let audienceOptions = ['Teachers','University Students', 'Senior High Students','Elementary Students', 'Junior High Students'];
+	let audienceOptions = [
+		'Teachers',
+		'University Students',
+		'Senior High Students',
+		'Elementary Students',
+		'Junior High Students'
+	];
 
 	let formData = {
 		topic: '',
@@ -125,7 +131,7 @@
 <div class="emi-form">
 	<form
 		on:submit|preventDefault={handleSubmit}
-		class="space-y-6 border border-gray-200 bg-white p-8 shadow-md"
+		class="space-y-6 border border-gray-200 bg-white p-8 shadow-md transition-colors duration-500 dark:border-slate-700 dark:bg-slate-800"
 	>
 		<div class="form-group">
 			<div class="input-group">
@@ -227,8 +233,8 @@
 
 <!-- EMI Error Display -->
 {#if error}
-	<div class="mt-6 rounded-md border-l-4 border-red-500 bg-red-50 p-4">
-		<p class="text-red-700">{error}</p>
+	<div class="mt-6 rounded-md border-l-4 border-red-500 bg-red-50 p-4 dark:bg-red-900/20">
+		<p class="text-red-700 dark:text-red-400">{error}</p>
 	</div>
 {/if}
 
@@ -238,8 +244,10 @@
 		<ProgressBar {phases} />
 		<!-- Final Workshop Plan -->
 		{#if finalWorkshopPlanOutput}
-			<div class="rounded-lg border border-gray-200 bg-white p-8 shadow-sm">
-				<div class="markdown-body">
+			<div
+				class="rounded-lg border border-gray-200 bg-white p-8 shadow-sm transition-colors duration-500 dark:border-slate-700 dark:bg-slate-800"
+			>
+				<div class="markdown-body dark:bg-gray-800">
 					{@html marked.parse(finalWorkshopPlanOutput)}
 				</div>
 				<div class="mt-4">

@@ -8,14 +8,14 @@
 	$: totalPhases = phases.length;
 	$: progressPercentage = (completedPhasesCount / totalPhases) * 100;
 
-	$: currentPhase = phases.find(phase => phase.isLoading);
+	$: currentPhase = phases.find((phase) => phase.isLoading);
 	$: currentPhaseName = currentPhase?.name || ''; // Get the name of the loading phase
 	$: showPhaseName = !!currentPhaseName; // Determine if we should show the phase name
 </script>
 
 <div class="mb-6">
 	{#if showPhaseName}
-		<p class="mb-2 text-center font-semibold text-gray-700">
+		<p class="mb-2 text-center font-semibold text-gray-700 dark:text-gray-300">
 			{currentPhaseName}
 			{#if currentPhase?.isLoading}
 				<span class="dot-animation">
@@ -24,14 +24,16 @@
 			{/if}
 		</p>
 	{/if}
-	<div class="h-2.5 w-full rounded-full bg-gray-200">
+	<div
+		class="h-2.5 w-full rounded-full bg-gray-200 transition-colors duration-500 dark:bg-slate-700"
+	>
 		<div
-			class="h-2.5 rounded-full bg-sky-600 transition-all duration-500"
+			class="h-2.5 rounded-full bg-sky-600 transition-all duration-500 dark:bg-sky-500"
 			style="width: {progressPercentage}%"
 		></div>
 	</div>
 </div>
 
 <style>
-  /* You can add more styling for the phase name if needed here */
+	/* You can add more styling for the phase name if needed here */
 </style>

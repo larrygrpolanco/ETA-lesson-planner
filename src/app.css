@@ -1,5 +1,7 @@
 @import 'tailwindcss';
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 .relative {
 	position: relative;
 }
@@ -16,6 +18,193 @@
 	top: 1rem;
 	font-size: 1rem;
 	color: #9ca3af; /* Adjusted to slate-400 equivalent */
+}
+
+/* Global transition for all elements */
+* {
+	transition:
+		background-color 0.5s ease,
+		border-color 0.5s ease,
+		color 0.5s ease;
+}
+
+/* Softer dark mode colors */
+.dark {
+	--bg-primary: #1e293b; /* softer than pure black */
+	--bg-secondary: #1e293b; /* slightly darker for contrast */
+	--text-primary: #e2e8f0; /* softer than pure white */
+	--text-secondary: #cbd5e1; /* medium contrast text */
+	--text-muted: #94a3b8; /* low contrast text */
+	--border-color: #334155; /* softer border color */
+}
+
+/* Use CSS variables for colors */
+.dark body,
+.dark .min-h-screen {
+	background-color: var(--bg-primary);
+}
+
+.dark form,
+.dark .bg-white {
+	background-color: var(--bg-secondary);
+	border-color: var(--border-color);
+}
+
+.dark .text-gray-900 {
+	color: var(--text-primary);
+}
+
+.dark .text-gray-700 {
+	color: var(--text-secondary);
+}
+
+.dark .text-gray-500,
+.dark .text-gray-400 {
+	color: var(--text-muted);
+}
+
+/* Input fields with softer colors */
+.dark .input-field {
+	background-color: #2d3748; /* Slightly lighter than container bg */
+	border-color: #4b5563; /* Visible but not harsh border */
+	color: #e2e8f0; /* Softer white text */
+}
+
+/* Markdown with reduced contrast */
+.dark .markdown-body {
+	background-color: #2d3748;
+	color: #e2e8f0;
+}
+
+/* Dark mode styles for inputs and labels */
+.dark .input-field {
+	background-color: #1f2937; /* dark:bg-gray-800 */
+	border-color: #374151; /* dark:border-gray-700 */
+	color: #e5e7eb; /* dark:text-gray-200 */
+}
+
+.dark .input-label {
+	background-color: #1f2937; /* dark:bg-gray-800 */
+	color: #9ca3af; /* dark:text-gray-400 */
+}
+
+.dark .peer:focus + label,
+.dark .peer:not(:placeholder-shown) + label {
+	background-color: #1f2937; /* dark:bg-gray-800 */
+	color: #818cf8; /* dark:text-indigo-400 */
+}
+
+.dark .eta-form .peer:focus + label,
+.dark .eta-form .peer:not(:placeholder-shown) + label {
+	color: #60a5fa; /* dark:text-blue-400 */
+}
+
+/* Dark mode styles for buttons */
+.dark .submit-button {
+	background-color: #0369a1; /* dark:bg-sky-700 */
+}
+
+.dark .submit-button:hover {
+	background-color: #075985; /* dark:bg-sky-800 */
+}
+
+/* Dark mode styles for markdown content */
+.dark .markdown-body {
+	color: #e5e7eb; /* dark:text-gray-200 */
+}
+
+.dark .markdown-body h1 {
+	border-bottom-color: #4b5563; /* dark:border-gray-600 */
+}
+
+.dark .markdown-body code {
+	background-color: #374151; /* dark:bg-gray-700 */
+}
+
+.dark .markdown-body pre {
+	background-color: #1f2937; /* dark:bg-gray-800 */
+	border-color: #374151; /* dark:border-gray-700 */
+}
+
+.dark .shadow-md,
+.dark .shadow-sm {
+	box-shadow:
+		0 4px 6px -1px rgba(0, 0, 0, 0.2),
+		0 2px 4px -1px rgba(0, 0, 0, 0.1);
+}
+
+/* Softer text styles */
+.dark h1,
+.dark h2,
+.dark h3,
+.dark h4,
+.dark h5,
+.dark h6 {
+	color: #f1f5f9; /* slate-100 */
+}
+
+.dark p {
+	color: #e2e8f0; /* slate-200 */
+}
+
+.dark .markdown-body h1 {
+	border-bottom-color: #475569; /* slate-600 */
+}
+
+.dark .markdown-body code {
+	background-color: #334155; /* slate-700 */
+	color: #e2e8f0; /* slate-200 */
+}
+
+/* Make sure form labels aren't too bright */
+.dark .input-label {
+	background-color: #1e293b; /* slate-800 */
+	color: #94a3b8; /* slate-400 */
+}
+
+.dark .peer:focus + label,
+.dark .peer:not(:placeholder-shown) + label {
+	background-color: #1e293b; /* slate-800 */
+	color: #93c5fd; /* blue-300 instead of blue-400 */
+}
+/* Form backgrounds */
+.dark form,
+.dark .bg-white {
+	background-color: #1f2937; /* bg-gray-800 */
+	border-color: #374151; /* border-gray-700 */
+}
+
+/* Input fields */
+.dark .input-field {
+	background-color: #1f2937; /* bg-gray-800 */
+	border-color: #374151; /* border-gray-700 */
+	color: #e5e7eb; /* text-gray-200 */
+}
+
+/* Select options */
+.dark select option {
+	background-color: #1f2937; /* bg-gray-800 */
+}
+
+/* Markdown body and result containers */
+.dark .markdown-body {
+	background-color: #1f2937; /* bg-gray-800 */
+	color: #e5e7eb; /* text-gray-200 */
+}
+
+/* Progress bar background */
+.dark .bg-gray-200 {
+	background-color: #374151; /* bg-gray-700 */
+}
+
+.dark .bg-sky-600 {
+	background-color: #0ea5e9; /* bg-sky-500 */
+}
+
+/* Dropdown menu background and text color */
+.dark select option {
+	background-color: #1f2937; /* bg-gray-800 */
+	color: #ffffff; /* text-white */
 }
 
 .peer:focus + label,
@@ -213,20 +402,20 @@
 /* Add or update these rules in your CSS */
 .markdown-body ul,
 .markdown-body ol {
-  padding-left: 2rem; /* Increased indentation */
-  margin-bottom: 1.5rem; /* More space after lists */
-  margin-top: 0.5rem; /* Space before lists */
+	padding-left: 2rem; /* Increased indentation */
+	margin-bottom: 1.5rem; /* More space after lists */
+	margin-top: 0.5rem; /* Space before lists */
 }
 
 .markdown-body ul li,
 .markdown-body ol li {
-  margin-bottom: 0.5rem; /* Space between list items */
-  line-height: 1.5; /* Better line height for readability */
+	margin-bottom: 0.5rem; /* Space between list items */
+	line-height: 1.5; /* Better line height for readability */
 }
 
 /* Force number display for ordered lists */
 .markdown-body ol {
-  list-style-type: decimal !important;
+	list-style-type: decimal !important;
 }
 
 /* Style nested lists */
@@ -234,70 +423,102 @@
 .markdown-body ul ol,
 .markdown-body ol ul,
 .markdown-body ol ol {
-  margin-top: 0.5rem;
-  margin-bottom: 0.5rem;
+	margin-top: 0.5rem;
+	margin-bottom: 0.5rem;
+}
+
+/* Target specific markdown elements */
+.dark .markdown-body h1,
+.dark .markdown-body h2,
+.dark .markdown-body h3,
+.dark .markdown-body h4,
+.dark .markdown-body h5,
+.dark .markdown-body h6 {
+	color: #e5e7eb;
+}
+
+.dark .markdown-body code {
+	background-color: #374151;
+	color: #e5e7eb;
+}
+
+.dark .markdown-body pre {
+	background-color: #1f2937;
+	border-color: #374151;
+}
+
+/* Fix any input placeholders */
+.dark .input-field::placeholder {
+	color: #6b7280;
+}
+
+/* Fix dot animation in dark mode */
+.dark .dot-animation span {
+	background-color: #0ea5e9;
 }
 
 /* Add this to your <style> section */
 .dot-animation {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 4px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0 4px;
 }
 
 .dot-animation span {
-  width: 8px;
-  height: 8px;
-  margin: 0 4px;
-  border-radius: 50%;
-  opacity: 0.4;
-  animation: dotPulse 1.8s infinite ease-in-out;
+	width: 8px;
+	height: 8px;
+	margin: 0 4px;
+	border-radius: 50%;
+	opacity: 0.4;
+	animation: dotPulse 1.8s infinite ease-in-out;
 }
 
 .dot-animation span:nth-child(1) {
-  background-color: #0284c7;
-  animation-delay: 0s;
+	background-color: #0284c7;
+	animation-delay: 0s;
 }
 
 .dot-animation span:nth-child(2) {
-  background-color: #0284c7;
-  animation-delay: 0.3s;
+	background-color: #0284c7;
+	animation-delay: 0.3s;
 }
 
 .dot-animation span:nth-child(3) {
-  background-color: #0284c7;
-  animation-delay: 0.6s;
+	background-color: #0284c7;
+	animation-delay: 0.6s;
 }
 
 @keyframes dotPulse {
-  0%, 100% {
-    opacity: 0.4;
-    transform: translateY(0) scale(1);
-  }
-  50% {
-    opacity: 1;
-    transform: translateY(-6px) scale(1.1);
-  }
+	0%,
+	100% {
+		opacity: 0.4;
+		transform: translateY(0) scale(1);
+	}
+	50% {
+		opacity: 1;
+		transform: translateY(-6px) scale(1.1);
+	}
 }
 
 /* Subtle hover effect */
 .dot-animation:hover span {
-  animation-duration: 1.2s;
+	animation-duration: 1.2s;
 }
 
 /* Accessibility */
 @media (prefers-reduced-motion: reduce) {
-  .dot-animation span {
-    animation: simplePulse 2s infinite ease-in-out;
-  }
-  
-  @keyframes simplePulse {
-    0%, 100% {
-      opacity: 0.4;
-    }
-    50% {
-      opacity: 1;
-    }
-  }
+	.dot-animation span {
+		animation: simplePulse 2s infinite ease-in-out;
+	}
+
+	@keyframes simplePulse {
+		0%,
+		100% {
+			opacity: 0.4;
+		}
+		50% {
+			opacity: 1;
+		}
+	}
 }
