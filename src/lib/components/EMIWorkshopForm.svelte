@@ -179,7 +179,6 @@
 					/>
 					<label for="emi-participantCount" class="input-label">Number of Participants</label>
 				</div>
-				<p class="mt-1 text-xs text-gray-500">Typical range: 15-100 participants</p>
 			</div>
 		</div>
 
