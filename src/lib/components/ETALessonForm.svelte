@@ -1,118 +1,126 @@
 <script>
-	import { marked } from 'marked';
-	import ProgressBar from '$lib/components/ProgressBar.svelte';
+    import { marked } from 'marked';
+    import ProgressBar from '$lib/components/ProgressBar.svelte';
 
-	export let coTeachingOptions; // Receive these as props
-	export let gradeOptions; // Receive these as props
+    export let coTeachingOptions; // Receive these as props
+    export let gradeOptions; // Receive these as props
 
-	let formData = {
-		topic: '',
-		grade: 1,
-		classDuration: '',
-		coTeachingModel: 'One teach, one observe',
-		objectives: '',
-		classDescription: ''
-	};
+    let formData = {
+        topic: '',
+        grade: 1,
+        classDuration: '',
+        coTeachingModel: 'One teach, one observe',
+        objectives: '',
+        classDescription: ''
+    };
 
-	let lessonPlan = null;
-	let isLoading = false;
-	let error = null;
-	let phases = [
-		{
-			name: 'Refining Objectives',
-			key: 'objectives',
-			content: null,
-			isLoading: false,
-			completed: false
-		},
-		{
-			name: 'Generating Activities',
-			key: 'activities',
-			content: null,
-			isLoading: false,
-			completed: false
-		},
-		{
-			name: 'Preparing Components',
-			key: 'components',
-			content: null,
-			isLoading: false,
-			completed: false
-		},
-		{
-			name: 'Creating Final Plan',
-			key: 'finalPlan',
-			content: null,
-			isLoading: false,
-			completed: false
-		}
-	];
-	let finalLessonPlanOutput = null;
+    let lessonPlan = null;
+    let isLoading = false;
+    let error = null;
+    let phases = [
+        {
+            name: 'Refining Objectives',
+            key: 'objectives',
+            content: null,
+            isLoading: false,
+            completed: false
+        },
+        {
+            name: 'Generating Activities',
+            key: 'activities',
+            content: null,
+            isLoading: false,
+            completed: false
+        },
+        {
+            name: 'Preparing Components',
+            key: 'components',
+            content: null,
+            isLoading: false,
+            completed: false
+        },
+        {
+            name: 'Creating Final Plan',
+            key: 'finalPlan',
+            content: null,
+            isLoading: false,
+            completed: false
+        }
+    ];
+    let finalLessonPlanOutput = null;
 
-	async function handleSubmit() {
-		isLoading = true;
-		error = null;
-		lessonPlan = null;
-		finalLessonPlanOutput = null;
-		phases = phases.map((phase) => ({
-			...phase,
-			content: null,
-			isLoading: false,
-			completed: false
-		}));
+    async function handleSubmit() {
+        isLoading = true;
+        error = null;
+        lessonPlan = null;
+        finalLessonPlanOutput = null;
+        phases = phases.map((phase) => ({
+            ...phase,
+            content: null,
+            isLoading: false,
+            completed: false
+        }));
 
-		for (let i = 0; i < phases.length; i++) {
-			const phase = phases[i];
-			phases = phases.map((p, index) => (index === i ? { ...p, isLoading: true } : p));
-			phases = [...phases];
+        for (let i = 0; i < phases.length; i++) {
+            const phase = phases[i];
+            phases = phases.map((p, index) => (index === i ? { ...p, isLoading: true } : p));
+            phases = [...phases];
 
-			try {
-				const response = await fetch('/api/generate-eta-lesson', {
-					// Specific ETA endpoint
-					method: 'POST',
-					headers: { 'Content-Type': 'application/json', phase: phase.name },
-					body: JSON.stringify(formData)
-				});
+            try {
+                const response = await fetch('/api/generate-eta-lesson', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', phase: phase.name },
+                    body: JSON.stringify({
+                        ...formData,
+                        phases: phases.map(p => ({
+                            key: p.key,
+                            name: p.name,
+                            content: p.content,
+                            completed: p.completed
+                        }))
+                    })
+                });
 
-				if (!response.ok) throw new Error(`ETA Failed to generate ${phase.name}`);
-				const data = await response.json();
+                if (!response.ok) throw new Error(`ETA Failed to generate ${phase.name}`);
+                const data = await response.json();
 
-				if (data.phase.name === 'Creating Final Plan') {
-					finalLessonPlanOutput = data.phase.content;
-					lessonPlan = finalLessonPlanOutput;
-				}
+                if (data.phase.name === 'Creating Final Plan') {
+                    finalLessonPlanOutput = data.phase.content;
+                    lessonPlan = finalLessonPlanOutput;
+                }
 
-				phases = phases.map((p, index) => {
-					if (index === i) {
-						return { ...p, content: data.phase.content, isLoading: false, completed: true };
-					}
-					return p;
-				});
-				phases = [...phases];
-			} catch (err) {
-				error = err.message;
-				phases = phases.map((p) => ({ ...p, isLoading: false }));
-				phases = [...phases];
-				break;
-			}
-		}
-		isLoading = false;
-	}
+                phases = phases.map((p, index) => {
+                    if (index === i) {
+                        return { ...p, content: data.phase.content, isLoading: false, completed: true };
+                    }
+                    return p;
+                });
+                phases = [...phases];
+            } catch (err) {
+                error = err.message;
+                phases = phases.map((p) => ({ ...p, isLoading: false }));
+                phases = [...phases];
+                break;
+            }
+        }
+        isLoading = false;
+    }
 
-	function copyToClipboard() {
-		if (finalLessonPlanOutput) {
-			navigator.clipboard
-				.writeText(JSON.stringify(finalLessonPlanOutput, null, 2))
-				.then(() => {
-					alert('Lesson plan copied to clipboard!');
-				})
-				.catch((err) => {
-					console.error('Failed to copy: ', err);
-					alert('Failed to copy lesson plan to clipboard.');
-				});
-		}
-	}
+    function copyToClipboard() {
+        if (finalLessonPlanOutput) {
+            navigator.clipboard
+                .writeText(finalLessonPlanOutput)
+                .then(() => {
+                    alert('Lesson plan copied to clipboard!');
+                })
+                .catch((err) => {
+                    console.error('Failed to copy: ', err);
+                    alert('Failed to copy lesson plan to clipboard.');
+                });
+        }
+    }
 </script>
+
 
 <div class="eta-form">
 	<form

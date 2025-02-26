@@ -1,4 +1,4 @@
-// src/routes/api/generate-lesson/+server.js
+// src/routes/api/generate-eta-lesson/+server.js
 
 /**
  * @file Handles the API endpoint for generating lesson plan phases using Anthropic's API.
@@ -18,7 +18,7 @@ const anthropic = new Anthropic({
 });
 
 /**
- * POST endpoint for /api/generate-lesson
+ * POST endpoint for /api/generate-eta-lesson
  * Handles requests to generate different phases of a lesson plan.
  *
  * @param {Object} event - SvelteKit event object containing request details.
@@ -40,20 +40,45 @@ export async function POST({ request }) {
 		let model = 'claude-3-5-sonnet-20241022'; // Default model
 		let max_tokens = 200; // Default token limit
 
+		// Get values with appropriate fallbacks
+		const topic = formData.topic || '';
+		const grade = formData.grade || '';
+		const duration = formData.classDuration || '';
+		const coteachingModel = formData.coTeachingModel || '';
+		const description = formData.classDescription || '';
+		const objectives = formData.objectives || '';
+
+		// Extract previous phase outputs if they exist
+		let refinedObjectives = '';
+		let activities = '';
+		let components = '';
+
+		// Find phase content by looking through the phases array
+		if (formData.phases && Array.isArray(formData.phases)) {
+			const objectivesPhase = formData.phases.find((p) => p.key === 'objectives');
+			refinedObjectives = objectivesPhase && objectivesPhase.content ? objectivesPhase.content : '';
+
+			const activitiesPhase = formData.phases.find((p) => p.key === 'activities');
+			activities = activitiesPhase && activitiesPhase.content ? activitiesPhase.content : '';
+
+			const componentsPhase = formData.phases.find((p) => p.key === 'components');
+			components = componentsPhase && componentsPhase.content ? componentsPhase.content : '';
+		}
+
 		// Construct the prompt based on the requested phase
 		switch (phaseName) {
 			case 'Refining Objectives':
 				prompt = `As an expert English Teaching Assistant in Taiwan, you are part of a multi-step lesson planning workflow. Your role in Phase 1 is to refine raw learning objectives and provide supporting context for later phases. Improve on, but do not disregard important details in the INPUT OBJECTIVES. This is what the teacher wants to work on.
 
                 INPUT OBJECTIVES:
-                ${formData.objectives}
+                ${objectives}
 
                 LESSON CONTEXT:
-                Topic: ${formData.topic}
-                Grade Level: ${formData.grade}
-                Class Duration: ${formData.duration}
-                Co-teaching Model: ${formData.coteachingModel}
-                ${formData.description ? `Additional Description: ${formData.description}` : ''}
+                Topic: ${topic}
+                Grade Level: ${grade}
+                Class Duration: ${duration}
+                Co-teaching Model: ${coteachingModel}
+                ${description ? `Additional Description: ${description}` : ''}
 
                 Your response should have two parts:
 
@@ -71,7 +96,7 @@ export async function POST({ request }) {
                 - Suggested scaffolding approaches
 
                 b) Co-teaching Integration
-                - How these objectives work with the chosen co-teaching model (${formData.coteachingModel})
+                - How these objectives work with the chosen co-teaching model (${coteachingModel})
                 - Potential role distribution between ETA and LET
 
                 c) Cultural Elements
@@ -92,14 +117,14 @@ export async function POST({ request }) {
 				prompt = `As an expert English Teaching Assistant in Taiwan, you are working on Phase 2 of the lesson planning workflow. Your role is to transform the refined objectives and planning considerations from Phase 1 into a structured sequence of classroom activities.
 
                 PHASE 1 OUTPUT:
-                ${formData.refinedObjectives || 'No previous output provided'}
+                ${refinedObjectives ? refinedObjectives : 'No refined objectives provided'}
 
                 LESSON CONTEXT:
-                Topic: ${formData.topic}
-                Grade Level: ${formData.grade}
-                Class Duration: ${formData.duration}
-                Co-teaching Model: ${formData.coteachingModel}
-                ${formData.description ? `Additional Description: ${formData.description}` : ''}
+                Topic: ${topic}
+                Grade Level: ${grade}
+                Class Duration: ${duration}
+                Co-teaching Model: ${coteachingModel}
+                ${description ? `Additional Description: ${description}` : ''}
 
                 Create a detailed lesson procedure that:
                 1. Builds progressively toward the lesson objectives
@@ -108,57 +133,15 @@ export async function POST({ request }) {
                 4. Allows flexibility for teacher adaptation
                 5. Keeps activities simple and broadly applicable
 
-                Please structure your response using this format:
-
-                ### Time Distribution Overview
-                Total Class Time: ${formData.duration} minutes
+                Please include a timing overview:
+                Time Distribution Overview
+                Total Class Time: ${duration} minutes
                 - Warm-up: [X] minutes
                 - Introduction: [X] minutes
                 - Activities: [X] minutes
                 - Assessment: [X] minutes
                 - Closure: [X] minutes
-
-                ### I. Warm-up ([X] min)
-                Objective Connection: [Brief statement connecting to objectives]
-                Steps:
-                1. [Clear action step]
-                2. [Clear action step]
-                3. [Clear action step]
-
-                ### II. Introduction ([X] min)
-                Objective Connection: [Brief statement connecting to objectives]
-                Steps:
-                1. [Clear action step]
-                2. [Clear action step]
-                3. [Clear action step]
-
-                ### III. Main Activities ([X] min)
-                Objective Connection: [Brief statement connecting to objectives]
-                Steps:
-                1. [Clear action step]
-                2. [Clear action step]
-                3. [Clear action step]
-
-                Differentiation Note:
-                [Brief suggestion for adapting to different ability levels]
-
-                ### IV. Assessment ([X] min)
-                Success Criteria:
-                - [Criterion 1]
-                - [Criterion 2]
-
-                Steps:
-                1. [Clear action step]
-                2. [Clear action step]
-                3. [Clear action step]
-
-                ### V. Closure ([X] min)
-                Steps:
-                1. [Clear action step]
-                2. [Clear action step]
-
-                ### VI. Optional Extensions
-                [1-3 extension activities if time permits]
+                - Optional Extensions [X] minutes
 
                 Guidelines for Writing Activity Steps:
                 1. Write each step as a clear action
@@ -177,15 +160,15 @@ export async function POST({ request }) {
 				prompt = `As an expert English Teaching Assistant in Taiwan, you are working on Phase 3 of the lesson planning workflow. Your role is to identify essential materials and create reflection questions that align with ELTP Professional Standards.
 
                 Previous Phase Outputs:
-                Objectives: ${formData.refinedObjectives || 'No refined objectives provided'}
-                Activities: ${formData.activities || 'No activities provided'}
+                Objectives: ${refinedObjectives ? refinedObjectives : 'No refined objectives provided'}
+                Activities: ${activities ? activities : 'No activities provided'}
 
                 LESSON CONTEXT:
-                Topic: ${formData.topic}
-                Grade Level: ${formData.grade}
-                Class Duration: ${formData.duration}
-                Co-teaching Model: ${formData.coteachingModel}
-                ${formData.description ? `Additional Description: ${formData.description}` : ''}
+                Topic: ${topic}
+                Grade Level: ${grade}
+                Class Duration: ${duration}
+                Co-teaching Model: ${coteachingModel}
+                ${description ? `Additional Description: ${description}` : ''}
 
                 The ELTP Standards focus on:
                 1. Knowledge about Language
@@ -202,7 +185,7 @@ export async function POST({ request }) {
                 - [Material with brief purpose]
 
                 ### Basic Vocabulary & Sentence Patterns
-                Essential vocabulary (5-8 words max):
+                Essential vocabulary (4-6 words max):
                 - [word with simple definition]
                 - [word with simple definition]
 
@@ -223,95 +206,120 @@ export async function POST({ request }) {
 				break;
 
 			case 'Creating Final Plan':
-				prompt = `You are assisting English Teaching Assistants in Taiwan. This is the last phase in an AI lesson plan creation workflow. Your task in this final phase is to bring together all the previous phase outputs to create a cohesive final formatted version of this lesson plan.
+				prompt = `You are assisting English Teaching Assistants in Taiwan with Fulbright. This is the last phase in an AI lesson plan creation workflow. Your task in this final phase is to bring together all the previous phase outputs to create a cohesive final formatted version of this lesson plan which the teacher can use to build on or run a lesson in their class.
+
+                Apply Universal Design for Learning (UDL) principles throughout the plan by:
+                1. Including multiple means of engagement (different motivational approaches)
+                2. Incorporating multiple means of representation (varied ways of presenting content)
+                3. Providing multiple means of action and expression (diverse ways for students to demonstrate learning)
+                4. Ensuring backward design (clear objectives drive assessment and activities)
 
                 Context Information:
-                Topic: ${formData.topic}
-                Time: ${formData.duration} 
-                Grade: ${formData.grade}
-                Co-teaching Model: ${formData.coteachingModel}
-                ${formData.description ? `Additional Description: ${formData.description}` : ''}
+                Topic: ${topic}
+                Time: ${duration} 
+                Grade: ${grade}
+                Co-teaching Model: ${coteachingModel}
+                ${description ? `Additional Description: ${description}` : ''}
 
                 Previous Phase Outputs:
-                Objectives Phase Output: ${formData.refinedObjectives || 'No refined objectives provided'}
-                Procedures Phase Output: ${formData.activities || 'No activities provided'}
-                Components Phase Output: ${formData.components || 'No components provided'}
+                Objectives Phase Output: ${refinedObjectives ? refinedObjectives : 'No refined objectives provided'}
+                Procedures Phase Output: ${activities ? activities : 'No activities provided'}
+                Components Phase Output: ${components ? components : 'No components provided'}
 
                 Lesson Plan Template:
-                    Here's a starting idea for your lesson plan!
-
                     # [Topic]
                     **Grade:** [grade]  
                     **Time:** [duration]  
 
                     ## Learning Objectives
                     Students will be able to:
-                    - [objective 1]
-                    - [objective 2]
+                    1. [objective 1]
+                    2. [objective 2]
                     
                     ## Teaching Materials
-                    - [material 1]
-                    - [material 2]
+                    - [material]
+                    - [material]
                     
                     ## Basic Vocabulary & Sentence Patterns
                     **New Vocabulary:**
-                    - [word 1]
-                    - [word 2]
+                    - [word in english and traditional chinese]
+                    - [word in english and traditional chinese]
                     
                     **Target Patterns:**
-                    - [pattern 1]
-                    - [pattern 2]
+                    - [pattern]
+                    - [pattern]
                     
                     ## Procedures
-                    [Transfer the procedures from the previous phase, maintaining all their original detail and structure while applying consistent formatting. Keep the natural flow and depth of instructions.]
+                    ### I. Warm-up ([X] min)
+                    **Objective Connection:** 
+                    [Brief statement connecting to objectives]
 
-                    ### I. Warm up (XX min)
-                    Objective Connection: [Insert from Procedures Phase Output]
+                    **Steps:**
+                    1. [Clear action step 1]
+                    2. [Clear action step 2]
+                    3. [Clear action step 3]
 
-                    Steps: [From Procedures Phase Output]
-                    
-                    ### II. Introduction (XX min)
-                    Objective Connection: [Insert from Procedures Phase Output]
 
-                    Steps: 
-                    [Insert from Procedures Phase Output]
-                    
-                    ### III. Main Activities (XX min)
-                    Objective Connection: [Insert from Procedures Phase Output]
+                    ### II. Introduction ([X] min)
+                    **Objective Connection:** 
+                    [Brief statement connecting to objectives]
 
-                    Steps: 
-                    [Insert from Procedures Phase Output]
+                    **Steps:**
+                    1. [Clear action step 1]
+                    2. [Clear action step 2]
+                    3. [Clear action step 3]
+
+                    ### III. Main Activities ([X] min)
+                    **Objective Connection:** 
+                    [Brief statement connecting to objectives]
+
+                    **Steps:**
+                    1. [Clear action step 1]
+                    2. [Clear action step 2]
+                    3. [Clear action step 3]
 
                     Differentiation Note:
-                    [Insert from Procedures Phase Output]
+                    - *For struggling learners:* [Specific support strategy]
+                    - *For advanced learners:* [Specific extension strategy] 
+                    - *Multiple means of engagement:* [How activity provides options for interest]
+                    - *Multiple means of representation:* [How content is presented in various ways]
+                    - *Multiple means of expression* [How students can demonstrate learning differently]
 
-                    ### IV. Assessment (XX min)
-                    Success Criteria:
-                    [Insert from Procedures Phase Output]
-                    
+                    ### IV. Assessment ([X] min)
+                    **Success Criteria:**
+                    - [Criterion]
+                    - [Criterion]
+
+                    **Assessment Methods** (provide at least 2 options):
+                    1. [Assessment method]
+                    2. [Assessment method]
+
                     Steps:
-                    [Insert from Procedures Phase Output]
-                    
-                    ### V. Closure (XX min)
-                    Steps:
-                    [Insert from Procedures Phase Output]
-                    
+                    1. [Clear action step 1]
+                    2. [Clear action step 2]
+                    3. [Clear action step 3]
+
+                    ### V. Closure ([X] min)
+                    **Steps:**
+                    1. [Clear action step 1]
+                    2. [Clear action step 2]
+
+                    **Reflection Opportunity:** [Brief description of how students reflect on learning]
+
                     ### VI. Optional Extensions
-                    [Insert from Procedures Phase Output]
+                    [1-3 extension activities if time permits, with at least one addressing advanced learners]
                     
-                    ## Reflection Questions
-                    1. [question 1]
-                    2. [question 2]
+                    ## Reflection Questions for Teachers
+                    1. [Question 2]
+                    2. [Question 1]
 
                 Note: 
-                - When formatting the Procedures section, you must copy the exact content from the PROCEDURES output above. Do not summarize or simplify the steps.
-                - Maintain all step-by-step instructions
-                - Preserve all assessment criteria
-                - Keep all differentiation notes
-                - Use consistent markdown formatting throughout
-                - Always start with 'Here's a starting idea for your lesson plan!'`;
+                - Ensure each activity includes at least one UDL element (engagement, representation, or expression)
+                - Include differentiation strategies for diverse learners
+                - Provide multiple assessment options aligned with objectives
+                - Use consistent markdown formatting throughout and use numbered lists where numbered in the template.`;
 
-				model = 'claude-3-5-sonnet-20241022';
+				model = 'claude-3-7-sonnet-20250219';
 				max_tokens = 4000;
 				break;
 

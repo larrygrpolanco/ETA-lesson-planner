@@ -19,7 +19,7 @@
 			{currentPhaseName}
 			{#if currentPhase?.isLoading}
 				<span class="dot-animation">
-					<span>.</span><span>.</span><span>.</span>
+					<span></span><span></span><span></span>
 				</span>
 			{/if}
 		</p>

@@ -209,3 +209,67 @@
 	background-color: transparent; /* Ensure code inside pre doesn't have background */
 	padding: 0; /* Reset padding for code inside pre */
 }
+
+/* Add this to your <style> section */
+.dot-animation {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+}
+
+.dot-animation span {
+  width: 8px;
+  height: 8px;
+  margin: 0 4px;
+  border-radius: 50%;
+  opacity: 0.4;
+  animation: dotPulse 1.8s infinite ease-in-out;
+}
+
+.dot-animation span:nth-child(1) {
+  background-color: #0284c7;
+  animation-delay: 0s;
+}
+
+.dot-animation span:nth-child(2) {
+  background-color: #0284c7;
+  animation-delay: 0.3s;
+}
+
+.dot-animation span:nth-child(3) {
+  background-color: #0284c7;
+  animation-delay: 0.6s;
+}
+
+@keyframes dotPulse {
+  0%, 100% {
+    opacity: 0.4;
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-6px) scale(1.1);
+  }
+}
+
+/* Subtle hover effect */
+.dot-animation:hover span {
+  animation-duration: 1.2s;
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .dot-animation span {
+    animation: simplePulse 2s infinite ease-in-out;
+  }
+  
+  @keyframes simplePulse {
+    0%, 100% {
+      opacity: 0.4;
+    }
+    50% {
+      opacity: 1;
+    }
+  }
+}

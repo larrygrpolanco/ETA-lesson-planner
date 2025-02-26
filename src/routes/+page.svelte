@@ -30,7 +30,7 @@
 			<button
 				class="flex-1 rounded-t-md px-4 pt-3 text-xl font-medium transition-colors
                 duration-200 focus:outline-none {activeTab === 'eta'
-					? 'border-b-2 border-indigo-500 text-indigo-500'
+					? 'border-b-2 border-blue-500 text-blue-500'
 					: 'text-gray-500 hover:text-gray-700'}"
 				on:click={() => (activeTab = 'eta')}
 			>
