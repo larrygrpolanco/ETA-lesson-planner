@@ -1,7 +1,6 @@
 @import 'tailwindcss';
 
-@custom-variant dark (&:where(.dark, .dark *));
-
+/* ====== BASE STYLES ====== */
 .relative {
 	position: relative;
 }
@@ -11,284 +10,195 @@
 }
 
 .form-group {
-	margin-bottom: 1.5rem; /* Increased margin for better spacing */
+	margin-bottom: 1.5rem;
 }
 
-.peer:placeholder-shown + label {
-	top: 1rem;
-	font-size: 1rem;
-	color: #9ca3af; /* Adjusted to slate-400 equivalent */
+/* ====== CSS VARIABLES ====== */
+:root {
+	/* Light mode colors */
+	--bg-primary: #f9fafb;
+	--bg-secondary: #ffffff;
+	--bg-input: #ffffff;
+	--text-primary: #374151;
+	--text-secondary: #4b5563;
+	--text-muted: #9ca3af;
+	--text-placeholder: #9ca3af;
+	--border-color: #d1d5db;
+	--border-focus-eta: #3b82f6; /* Blue-500 */
+	--border-focus-emi: #6366f1; /* Indigo-500 */
+	--shadow-focus: rgba(99, 102, 241, 0.25);
+	--button-bg: #0284c7; /* sky-600 */
+	--button-hover: #0369a1; /* sky-700 */
+	--code-bg: #f0f0f0;
+	--pre-bg: #f8f8f8;
+	--pre-border: #eee;
+	--heading-color: #333333;
+	--progress-bg: #e5e7eb; /* gray-200 */
+	--progress-fill: #0284c7; /* sky-600 */
+	--dot-color: #0284c7; /* sky-600 */
 }
 
-/* Global transition for all elements */
+.dark {
+	/* Dark mode colors */
+	--bg-primary: #1e293b;
+	--bg-secondary: #1f2937;
+	--bg-input: #1f2937;
+	--text-primary: #e2e8f0;
+	--text-secondary: #cbd5e1;
+	--text-muted: #94a3b8;
+	--text-placeholder: #6b7280;
+	--border-color: #374151;
+	--border-focus-eta: #60a5fa; /* Blue-400 */
+	--border-focus-emi: #818cf8; /* Indigo-400 */
+	--shadow-focus: rgba(99, 102, 241, 0.25);
+	--button-bg: #0369a1; /* sky-700 */
+	--button-hover: #075985; /* sky-800 */
+	--code-bg: #374151;
+	--pre-bg: #1f2937;
+	--pre-border: #374151;
+	--heading-color: #f1f5f9;
+	--progress-bg: #374151; /* gray-700 */
+	--progress-fill: #0ea5e9; /* sky-500 */
+	--dot-color: #0ea5e9; /* sky-500 */
+}
+
+/* ====== TRANSITIONS ====== */
 * {
 	transition:
 		background-color 0.5s ease,
 		border-color 0.5s ease,
-		color 0.5s ease;
+		color 0.5s ease,
+		box-shadow 0.3s ease;
 }
 
-/* Softer dark mode colors */
-.dark {
-	--bg-primary: #1e293b; /* softer than pure black */
-	--bg-secondary: #1e293b; /* slightly darker for contrast */
-	--text-primary: #e2e8f0; /* softer than pure white */
-	--text-secondary: #cbd5e1; /* medium contrast text */
-	--text-muted: #94a3b8; /* low contrast text */
-	--border-color: #334155; /* softer border color */
-}
-
-/* Use CSS variables for colors */
-.dark body,
-.dark .min-h-screen {
+/* ====== THEME STYLES ====== */
+body,
+.min-h-screen {
 	background-color: var(--bg-primary);
+	color: var(--text-primary);
 }
 
-.dark form,
-.dark .bg-white {
+form,
+.bg-white {
 	background-color: var(--bg-secondary);
 	border-color: var(--border-color);
 }
 
-.dark .text-gray-900 {
+.text-gray-900 {
 	color: var(--text-primary);
 }
 
-.dark .text-gray-700 {
+.text-gray-700 {
 	color: var(--text-secondary);
 }
 
-.dark .text-gray-500,
-.dark .text-gray-400 {
+.text-gray-500,
+.text-gray-400 {
 	color: var(--text-muted);
 }
 
-/* Input fields with softer colors */
-.dark .input-field {
-	background-color: #2d3748; /* Slightly lighter than container bg */
-	border-color: #4b5563; /* Visible but not harsh border */
-	color: #e2e8f0; /* Softer white text */
+h1, h2, h3, h4, h5, h6 {
+	color: var(--heading-color);
 }
 
-/* Markdown with reduced contrast */
-.dark .markdown-body {
-	background-color: #2d3748;
-	color: #e2e8f0;
+p {
+	color: var(--text-secondary);
 }
 
-/* Dark mode styles for inputs and labels */
-.dark .input-field {
-	background-color: #1f2937; /* dark:bg-gray-800 */
-	border-color: #374151; /* dark:border-gray-700 */
-	color: #e5e7eb; /* dark:text-gray-200 */
+/* Progress bar */
+.bg-gray-200 {
+	background-color: var(--progress-bg);
 }
 
-.dark .input-label {
-	background-color: #1f2937; /* dark:bg-gray-800 */
-	color: #9ca3af; /* dark:text-gray-400 */
+.bg-sky-600 {
+	background-color: var(--progress-fill);
 }
 
-.dark .peer:focus + label,
-.dark .peer:not(:placeholder-shown) + label {
-	background-color: #1f2937; /* dark:bg-gray-800 */
-	color: #818cf8; /* dark:text-indigo-400 */
-}
-
-.dark .eta-form .peer:focus + label,
-.dark .eta-form .peer:not(:placeholder-shown) + label {
-	color: #60a5fa; /* dark:text-blue-400 */
-}
-
-/* Dark mode styles for buttons */
-.dark .submit-button {
-	background-color: #0369a1; /* dark:bg-sky-700 */
-}
-
-.dark .submit-button:hover {
-	background-color: #075985; /* dark:bg-sky-800 */
-}
-
-/* Dark mode styles for markdown content */
-.dark .markdown-body {
-	color: #e5e7eb; /* dark:text-gray-200 */
-}
-
-.dark .markdown-body h1 {
-	border-bottom-color: #4b5563; /* dark:border-gray-600 */
-}
-
-.dark .markdown-body code {
-	background-color: #374151; /* dark:bg-gray-700 */
-}
-
-.dark .markdown-body pre {
-	background-color: #1f2937; /* dark:bg-gray-800 */
-	border-color: #374151; /* dark:border-gray-700 */
-}
-
-.dark .shadow-md,
-.dark .shadow-sm {
-	box-shadow:
-		0 4px 6px -1px rgba(0, 0, 0, 0.2),
-		0 2px 4px -1px rgba(0, 0, 0, 0.1);
-}
-
-/* Softer text styles */
-.dark h1,
-.dark h2,
-.dark h3,
-.dark h4,
-.dark h5,
-.dark h6 {
-	color: #f1f5f9; /* slate-100 */
-}
-
-.dark p {
-	color: #e2e8f0; /* slate-200 */
-}
-
-.dark .markdown-body h1 {
-	border-bottom-color: #475569; /* slate-600 */
-}
-
-.dark .markdown-body code {
-	background-color: #334155; /* slate-700 */
-	color: #e2e8f0; /* slate-200 */
-}
-
-/* Make sure form labels aren't too bright */
-.dark .input-label {
-	background-color: #1e293b; /* slate-800 */
-	color: #94a3b8; /* slate-400 */
-}
-
-.dark .peer:focus + label,
-.dark .peer:not(:placeholder-shown) + label {
-	background-color: #1e293b; /* slate-800 */
-	color: #93c5fd; /* blue-300 instead of blue-400 */
-}
-/* Form backgrounds */
-.dark form,
-.dark .bg-white {
-	background-color: #1f2937; /* bg-gray-800 */
-	border-color: #374151; /* border-gray-700 */
-}
-
-/* Input fields */
-.dark .input-field {
-	background-color: #1f2937; /* bg-gray-800 */
-	border-color: #374151; /* border-gray-700 */
-	color: #e5e7eb; /* text-gray-200 */
-}
-
-/* Select options */
-.dark select option {
-	background-color: #1f2937; /* bg-gray-800 */
-}
-
-/* Markdown body and result containers */
-.dark .markdown-body {
-	background-color: #1f2937; /* bg-gray-800 */
-	color: #e5e7eb; /* text-gray-200 */
-}
-
-/* Progress bar background */
-.dark .bg-gray-200 {
-	background-color: #374151; /* bg-gray-700 */
-}
-
-.dark .bg-sky-600 {
-	background-color: #0ea5e9; /* bg-sky-500 */
-}
-
-/* Dropdown menu background and text color */
-.dark select option {
-	background-color: #1f2937; /* bg-gray-800 */
-	color: #ffffff; /* text-white */
-}
-
-.peer:focus + label,
-.peer:not(:placeholder-shown) + label {
-	top: -0.5rem; /* Slightly adjusted label position */
-	font-size: 0.875rem;
-	color: #6366f1; /* Indigo-500 for a softer primary accent color */
-	background-color: white; /* White background */
-	padding: 0 0.25rem;
-	border-radius: 0.25rem; /* Softened label background radius */
-}
-
-/* ETA Form Specific Styles */
-.eta-form .peer:focus + label,
-.eta-form .peer:not(:placeholder-shown) + label {
-	color: #3b82f6; /* Blue-500 for ETA forms */
-}
-
-.eta-form .input-field:focus {
-	border-color: #3b82f6; /* Blue-500 for ETA forms */
-}
-
-/* Custom classes - Modernized */
+/* ====== INPUT STYLES ====== */
 .input-group {
 	position: relative;
 }
 
 .input-field {
 	width: 100%;
-	border-radius: 0.5rem; /* Slightly less rounded input fields */
+	border-radius: 0.5rem;
 	border-width: 1px;
 	border-style: solid;
-	border-color: #d1d5db; /* Gray-300 for softer border */
-	padding: 0.875rem 1rem; /* Adjusted padding */
-	font-size: 1rem; /* Slightly reduced font size */
-	line-height: 1.5rem; /* Adjusted line height */
-	color: #374151; /* Gray-700 for darker but soft text */
-	transition-property: border-color, box-shadow; /* Smoother transitions */
+	border-color: var(--border-color);
+	background-color: var(--bg-input);
+	padding: 0.875rem 1rem;
+	font-size: 1rem;
+	line-height: 1.5rem;
+	color: var(--text-primary);
+	transition-property: border-color, box-shadow;
 	transition-duration: 200ms;
 	-webkit-appearance: none;
 	-moz-appearance: none;
 	appearance: none;
 }
 
-.input-field::placeholder {
-	color: #9ca3af; /* Slate-400 for placeholder */
-}
-
 .input-field:focus {
-	border-color: #6366f1; /* Indigo-500 for EMI forms (default) */
+	border-color: var(--border-focus-emi);
 	outline: none;
-	box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.25); /* Indigo-500 with opacity for focus shadow */
-}
-.eta-form .input-field:focus {
-	border-color: #3b82f6; /* Blue-500 for ETA forms */
-	outline: none;
-	box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.25); /* Indigo-500 with opacity for focus shadow */
+	box-shadow: 0 0 0 2px var(--shadow-focus);
 }
 
+.eta-form .input-field:focus {
+	border-color: var(--border-focus-eta);
+}
+
+.input-field::placeholder {
+	color: var(--text-placeholder);
+}
+
+/* ====== LABEL STYLES ====== */
 .input-label {
 	position: absolute;
 	top: 1rem;
 	left: 1rem;
-	background-color: white; /* White background */
+	background-color: var(--bg-input);
 	padding-left: 0.25rem;
 	padding-right: 0.25rem;
-	font-size: 1rem; /* Slightly reduced label font size */
-	line-height: 1.5rem; /* Adjusted line height */
-	color: #9ca3af; /* Slate-400 for label text */
+	font-size: 1rem;
+	line-height: 1.5rem;
+	color: var(--text-muted);
 	transition-property: all;
 	transition-duration: 200ms;
-	border-radius: 0.25rem; /* Softened label radius */
+	border-radius: 0.25rem;
 }
 
+.peer:placeholder-shown + label {
+	top: 1rem;
+	font-size: 1rem;
+	color: var(--text-muted);
+}
+
+.peer:focus + label,
+.peer:not(:placeholder-shown) + label {
+	top: -0.5rem;
+	font-size: 0.875rem;
+	color: var(--border-focus-emi);
+	background-color: var(--bg-input);
+	padding: 0 0.25rem;
+	border-radius: 0.25rem;
+}
+
+.eta-form .peer:focus + label,
+.eta-form .peer:not(:placeholder-shown) + label {
+	color: var(--border-focus-eta);
+}
+
+/* ====== BUTTON STYLES ====== */
 .submit-button {
 	width: 100%;
-	border-radius: 0.5rem; /* Slightly less rounded button */
-	background-color: #0284c7; /* sky-600 for button background */
-	padding: 0.875rem 1.5rem; /* Adjusted button padding */
-	font-size: 1rem; /* Slightly reduced button font size */
-	line-height: 1.5rem; /* Adjusted line height */
+	border-radius: 0.5rem;
+	background-color: var(--button-bg);
+	padding: 0.875rem 1.5rem;
+	font-size: 1rem;
+	line-height: 1.5rem;
 	font-weight: 500;
 	color: #ffffff;
-	transition-property: background-color, box-shadow; /* Smoother transitions */
+	transition-property: background-color, box-shadow;
 	transition-duration: 200ms;
 	cursor: pointer;
 	border: none;
@@ -298,12 +208,12 @@
 }
 
 .submit-button:hover {
-	background-color: #0369a1; /* Sky-700 for hover */
+	background-color: var(--button-hover);
 }
 
 .submit-button:focus {
 	outline: none;
-	box-shadow: 0 0 0 2px rgba(0, 194, 224, 0.5); /* Sky-500 with opacity for focus shadow */
+	box-shadow: 0 0 0 2px var(--shadow-focus);
 }
 
 .submit-button:disabled {
@@ -311,6 +221,7 @@
 	opacity: 0.5;
 }
 
+/* ====== SPINNER ====== */
 .spinner {
 	border: 4px solid rgba(0, 0, 0, 0.1);
 	border-top: 4px solid #3498db;
@@ -318,7 +229,7 @@
 	width: 20px;
 	height: 20px;
 	animation: spin 1s linear infinite;
-	display: inline-block; /* To align with text */
+	display: inline-block;
 	margin-left: 8px;
 }
 
@@ -331,15 +242,16 @@
 	}
 }
 
-/* Simplified Markdown Styling for Lesson Plan Output */
+/* ====== MARKDOWN STYLING ====== */
 .markdown-body {
 	font-family:
-		-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif; /* Modern, readable font stack */
-	font-size: 1rem; /* Base font size - adjust if needed */
-	line-height: 1.6; /* Good line spacing for readability */
-	color: #333; /* Dark grey for text */
-	word-wrap: break-word; /* Prevent long words from breaking layout */
-	padding: 1rem; /* ADD PADDING HERE */
+		-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+	font-size: 1rem;
+	line-height: 1.6;
+	color: var(--text-primary);
+	background-color: var(--bg-secondary);
+	word-wrap: break-word;
+	padding: 1rem;
 }
 
 .markdown-body h1,
@@ -348,15 +260,16 @@
 .markdown-body h4,
 .markdown-body h5,
 .markdown-body h6 {
-	font-weight: bold; /* Make headings stand out */
-	line-height: 1.3; /* Slightly tighter line height for headings */
-	margin-top: 1.5rem; /* Space above headings */
-	margin-bottom: 0.5rem; /* Space below headings */
+	font-weight: bold;
+	line-height: 1.3;
+	margin-top: 1.5rem;
+	margin-bottom: 0.5rem;
+	color: var(--heading-color);
 }
 
 .markdown-body h1 {
-	font-size: 1.75rem; /* Slightly smaller h1 for a cleaner look */
-	border-bottom: 2px solid #ddd; /* Underline for main heading */
+	font-size: 1.75rem;
+	border-bottom: 2px solid var(--border-color);
 	padding-bottom: 0.25rem;
 }
 
@@ -369,56 +282,27 @@
 }
 
 .markdown-body p {
-	margin-bottom: 1rem; /* Spacing between paragraphs */
+	margin-bottom: 1rem;
+	color: var(--text-primary);
 }
 
 .markdown-body ul,
 .markdown-body ol {
-	padding-left: 1.5rem; /* Indentation for lists */
-	margin-bottom: 1rem; /* Spacing after lists */
-}
-
-.markdown-body code {
-	font-family: monospace; /* Monospace font for code */
-	background-color: #f0f0f0; /* Light grey background for inline code */
-	padding: 0.2rem 0.4rem; /* Padding around inline code */
-	border-radius: 3px; /* Rounded corners for inline code */
-}
-
-.markdown-body pre {
-	background-color: #f8f8f8; /* Very light grey background for code blocks */
-	padding: 0.75rem; /* Padding inside code blocks */
-	border: 1px solid #eee; /* Light border for code blocks */
-	border-radius: 5px; /* Rounded corners for code blocks */
-	overflow-x: auto; /* Enable horizontal scrolling for long code lines */
-	margin-bottom: 1rem; /* Spacing after code blocks */
-}
-
-.markdown-body pre > code {
-	background-color: transparent; /* Ensure code inside pre doesn't have background */
-	padding: 0; /* Reset padding for code inside pre */
-}
-
-/* Add or update these rules in your CSS */
-.markdown-body ul,
-.markdown-body ol {
-	padding-left: 2rem; /* Increased indentation */
-	margin-bottom: 1.5rem; /* More space after lists */
-	margin-top: 0.5rem; /* Space before lists */
+	padding-left: 2rem;
+	margin-bottom: 1.5rem;
+	margin-top: 0.5rem;
 }
 
 .markdown-body ul li,
 .markdown-body ol li {
-	margin-bottom: 0.5rem; /* Space between list items */
-	line-height: 1.5; /* Better line height for readability */
+	margin-bottom: 0.5rem;
+	line-height: 1.5;
 }
 
-/* Force number display for ordered lists */
 .markdown-body ol {
 	list-style-type: decimal !important;
 }
 
-/* Style nested lists */
 .markdown-body ul ul,
 .markdown-body ul ol,
 .markdown-body ol ul,
@@ -427,37 +311,43 @@
 	margin-bottom: 0.5rem;
 }
 
-/* Target specific markdown elements */
-.dark .markdown-body h1,
-.dark .markdown-body h2,
-.dark .markdown-body h3,
-.dark .markdown-body h4,
-.dark .markdown-body h5,
-.dark .markdown-body h6 {
-	color: #e5e7eb;
+.markdown-body code {
+	font-family: monospace;
+	background-color: var(--code-bg);
+	padding: 0.2rem 0.4rem;
+	border-radius: 3px;
+	color: var(--text-primary);
 }
 
-.dark .markdown-body code {
-	background-color: #374151;
-	color: #e5e7eb;
+.markdown-body pre {
+	background-color: var(--pre-bg);
+	padding: 0.75rem;
+	border: 1px solid var(--pre-border);
+	border-radius: 5px;
+	overflow-x: auto;
+	margin-bottom: 1rem;
 }
 
-.dark .markdown-body pre {
-	background-color: #1f2937;
-	border-color: #374151;
+.markdown-body pre > code {
+	background-color: transparent;
+	padding: 0;
 }
 
-/* Fix any input placeholders */
-.dark .input-field::placeholder {
-	color: #6b7280;
+/* ====== SHADOW EFFECTS ====== */
+.dark .shadow-md,
+.dark .shadow-sm {
+	box-shadow:
+		0 4px 6px -1px rgba(0, 0, 0, 0.2),
+		0 2px 4px -1px rgba(0, 0, 0, 0.1);
 }
 
-/* Fix dot animation in dark mode */
-.dark .dot-animation span {
-	background-color: #0ea5e9;
+/* ====== SELECT STYLES ====== */
+select option {
+	background-color: var(--bg-input);
+	color: var(--text-primary);
 }
 
-/* Add this to your <style> section */
+/* ====== DOT ANIMATION ====== */
 .dot-animation {
 	display: inline-flex;
 	align-items: center;
@@ -471,21 +361,19 @@
 	margin: 0 4px;
 	border-radius: 50%;
 	opacity: 0.4;
+	background-color: var(--dot-color);
 	animation: dotPulse 1.8s infinite ease-in-out;
 }
 
 .dot-animation span:nth-child(1) {
-	background-color: #0284c7;
 	animation-delay: 0s;
 }
 
 .dot-animation span:nth-child(2) {
-	background-color: #0284c7;
 	animation-delay: 0.3s;
 }
 
 .dot-animation span:nth-child(3) {
-	background-color: #0284c7;
 	animation-delay: 0.6s;
 }
 
@@ -501,12 +389,11 @@
 	}
 }
 
-/* Subtle hover effect */
 .dot-animation:hover span {
 	animation-duration: 1.2s;
 }
 
-/* Accessibility */
+/* ====== ACCESSIBILITY ====== */
 @media (prefers-reduced-motion: reduce) {
 	.dot-animation span {
 		animation: simplePulse 2s infinite ease-in-out;
