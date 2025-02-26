@@ -22,18 +22,19 @@
 <div class="min-h-screen bg-gray-100 transition-colors duration-500 dark:bg-slate-900">
 	<main class="container mx-auto max-w-3xl px-6 py-16">
 		<!-- Header with Dark Mode Toggle -->
-		<div class="relative mb-10 pr-16 text-center">
+		<div class="relative mb-10 text-center">
+			<!-- Button positioned absolutely -->
 			<div class="absolute top-0 right-0">
 				<DarkModeToggle />
 			</div>
-			<div class="text-center">
-				<h1 class="mb-3 text-3xl leading-tight font-bold text-gray-900 dark:text-slate-200">
-					Lesson Planner
-				</h1>
-				<p class="text-lg text-gray-700 dark:text-slate-400">
-					Craft personalized lesson plans effortlessly.
-				</p>
-			</div>
+
+			<!-- Title centered properly without padding adjustments -->
+			<h1 class="mb-3 text-3xl leading-tight font-bold text-gray-900 dark:text-slate-200">
+				Lesson Planner
+			</h1>
+			<p class="text-lg text-gray-700 dark:text-slate-400">
+				Craft personalized lesson plans effortlessly.
+			</p>
 		</div>
 
 		<!-- Tabs with softer dark mode variants -->

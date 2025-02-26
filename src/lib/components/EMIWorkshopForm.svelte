@@ -239,7 +239,7 @@
 <!-- EMI Error Display -->
 {#if error}
 	<div class="mt-6 rounded-md border-l-4 border-red-500 bg-red-50 p-4 dark:bg-red-900/20">
-		<p class="text-red-700 dark:text-red-400">{error}</p>
+		<p class="text-red-700 dark:text-red-400">{error}. Please try again later.</p>
 	</div>
 {/if}
 
