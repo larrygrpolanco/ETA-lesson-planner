@@ -1,7 +1,7 @@
 <!-- // src/routes/+page.svelte -->
 <script>
 	import ETALessonForm from '$lib/components/ETALessonForm.svelte';
-	import EMILessonForm from '$lib/components/EMILessonForm.svelte';
+	import EMIWorkshopForm from '$lib/components/EMIWorkshopForm.svelte';
 
 	let activeTab = 'eta'; // Default to ETA tab
 
@@ -54,7 +54,7 @@
 
 		<!-- EMI Form -->
 		{#if activeTab === 'emi'}
-			<EMILessonForm {coTeachingOptions} {gradeOptions} />
+			<EMIWorkshopForm />
 		{/if}
 	</main>
 </div>

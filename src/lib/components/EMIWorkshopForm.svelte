@@ -1,20 +1,21 @@
+<!-- EMIWorkshopForm.svelte -->
 <script>
 	import { marked } from 'marked';
 	import ProgressBar from '$lib/components/ProgressBar.svelte';
 
-	export let coTeachingOptions; // Receive these as props
-	export let gradeOptions; // Receive these as props
+	// Define audience options specifically for EMI workshops
+	let audienceOptions = ['Teachers','University Students', 'Senior High Students','Elementary Students', 'Junior High Students'];
 
 	let formData = {
 		topic: '',
-		grade: 1,
-		classDuration: '',
-		coTeachingModel: 'One teach, one observe',
+		audience: 'University Students', // Changed from grade to audience with University default
+		workshopDuration: '', // Changed from classDuration
+		participantCount: '', // Changed from coTeachingModel to number of participants
 		objectives: '',
-		classDescription: ''
+		workshopContext: '' // Changed from classDescription to be more workshop-focused
 	};
 
-	let lessonPlan = null;
+	let workshopPlan = null;
 	let isLoading = false;
 	let error = null;
 	let phases = [
@@ -26,34 +27,34 @@
 			completed: false
 		},
 		{
-			name: 'Generating Activities',
+			name: 'Designing Activities',
 			key: 'activities',
 			content: null,
 			isLoading: false,
 			completed: false
 		},
 		{
-			name: 'Preparing Components',
+			name: 'Creating Interactive Elements',
 			key: 'components',
 			content: null,
 			isLoading: false,
 			completed: false
 		},
 		{
-			name: 'Creating Final Plan',
+			name: 'Finalizing Workshop Plan',
 			key: 'finalPlan',
 			content: null,
 			isLoading: false,
 			completed: false
 		}
 	];
-	let finalLessonPlanOutput = null;
+	let finalWorkshopPlanOutput = null;
 
 	async function handleSubmit() {
 		isLoading = true;
 		error = null;
-		lessonPlan = null;
-		finalLessonPlanOutput = null;
+		workshopPlan = null;
+		finalWorkshopPlanOutput = null;
 		phases = phases.map((phase) => ({
 			...phase,
 			content: null,
@@ -68,18 +69,25 @@
 
 			try {
 				const response = await fetch('/api/generate-emi-lesson', {
-					// Specific EMI endpoint
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json', phase: phase.name },
-					body: JSON.stringify(formData)
+					body: JSON.stringify({
+						...formData,
+						phases: phases.map((p) => ({
+							key: p.key,
+							name: p.name,
+							content: p.content,
+							completed: p.completed
+						}))
+					})
 				});
 
-				if (!response.ok) throw new Error(`EMI Failed to generate ${phase.name}`);
+				if (!response.ok) throw new Error(`Failed to generate ${phase.name} for EMI workshop`);
 				const data = await response.json();
 
-				if (data.phase.name === 'Creating Final Plan') {
-					finalLessonPlanOutput = data.phase.content;
-					lessonPlan = finalLessonPlanOutput;
+				if (data.phase.name === 'Finalizing Workshop Plan') {
+					finalWorkshopPlanOutput = data.phase.content;
+					workshopPlan = finalWorkshopPlanOutput;
 				}
 
 				phases = phases.map((p, index) => {
@@ -100,15 +108,15 @@
 	}
 
 	function copyToClipboard() {
-		if (finalLessonPlanOutput) {
+		if (finalWorkshopPlanOutput) {
 			navigator.clipboard
-				.writeText(JSON.stringify(finalLessonPlanOutput, null, 2))
+				.writeText(finalWorkshopPlanOutput)
 				.then(() => {
 					alert('Workshop plan copied to clipboard!');
 				})
 				.catch((err) => {
 					console.error('Failed to copy: ', err);
-					alert('Failed to copy Workshop plan to clipboard.');
+					alert('Failed to copy workshop plan to clipboard.');
 				});
 		}
 	}
@@ -129,7 +137,7 @@
 					class="input-field peer"
 					required
 				/>
-				<label for="emi-topic" class="input-label"> Lesson Topic</label>
+				<label for="emi-topic" class="input-label">Workshop Topic</label>
 			</div>
 		</div>
 
@@ -138,41 +146,39 @@
 				<div class="input-group">
 					<input
 						type="text"
-						id="emi-classDuration"
-						bind:value={formData.classDuration}
+						id="emi-workshopDuration"
+						bind:value={formData.workshopDuration}
 						placeholder=""
 						class="input-field peer"
 						required
 					/>
-					<label for="emi-classDuration" class="input-label"> Class Duration</label>
+					<label for="emi-workshopDuration" class="input-label">Workshop Duration</label>
 				</div>
 			</div>
 			<div class="form-group">
 				<div class="input-group">
-					<select id="emi-grade" bind:value={formData.grade} class="input-field peer" required>
-						{#each gradeOptions as grade}
-							<option value={grade}>Grade {grade}</option>
-						{/each}
-						<option>University</option>
-					</select>
-					<label for="emi-grade" class="input-label"> Grade Level</label>
+					<input
+						type="text"
+						id="emi-participantCount"
+						bind:value={formData.participantCount}
+						placeholder=""
+						class="input-field peer"
+						required
+					/>
+					<label for="emi-participantCount" class="input-label">Number of Participants</label>
 				</div>
+				<p class="mt-1 text-xs text-gray-500">Typical range: 15-100 participants</p>
 			</div>
 		</div>
 
 		<div class="form-group">
 			<div class="input-group">
-				<select
-					id="emi-coTeachingModel"
-					bind:value={formData.coTeachingModel}
-					class="input-field peer"
-					required
-				>
-					{#each coTeachingOptions as option}
+				<select id="emi-audience" bind:value={formData.audience} class="input-field peer" required>
+					{#each audienceOptions as option}
 						<option value={option}>{option}</option>
 					{/each}
 				</select>
-				<label for="emi-coTeachingModel" class="input-label"> Co-teaching Model</label>
+				<label for="emi-audience" class="input-label">Target Audience</label>
 			</div>
 		</div>
 
@@ -185,24 +191,25 @@
 					class="input-field peer h-28"
 					required
 				></textarea>
-				<label for="emi-objectives" class="input-label"> Learning Objectives</label>
+				<label for="emi-objectives" class="input-label">Workshop Objectives</label>
 			</div>
 		</div>
 
 		<div class="form-group">
 			<div class="input-group">
 				<textarea
-					id="emi-classDescription"
-					bind:value={formData.classDescription}
+					id="emi-workshopContext"
+					bind:value={formData.workshopContext}
 					placeholder=""
 					class="input-field peer h-28"
 				></textarea>
-				<label for="emi-classDescription" class="input-label">
-					Classroom Context <span class="text-gray-500">(Optional)</span>
+				<label for="emi-workshopContext" class="input-label">
+					Workshop Context <span class="text-gray-500">(Optional)</span>
 				</label>
 			</div>
 			<p class="mt-3 text-sm text-gray-600">
-				Provide details about your class - size, levels, special needs, etc.
+				Provide details about your audience - English level, cultural context, specific needs for
+				interactive elements, etc.
 			</p>
 		</div>
 
@@ -211,7 +218,7 @@
 				{#if isLoading}
 					Creating Workshop Plan
 				{:else}
-					Generate EMI Plan
+					Generate Workshop Plan
 				{/if}
 			</button>
 		</div>
@@ -226,18 +233,18 @@
 {/if}
 
 <!-- EMI Results Display Section -->
-{#if isLoading || finalLessonPlanOutput}
+{#if isLoading || finalWorkshopPlanOutput}
 	<div class>
 		<ProgressBar {phases} />
-		<!-- Final Lesson Plan - Not Collapsible -->
-		{#if finalLessonPlanOutput}
+		<!-- Final Workshop Plan -->
+		{#if finalWorkshopPlanOutput}
 			<div class="rounded-lg border border-gray-200 bg-white p-8 shadow-sm">
 				<div class="markdown-body">
-					{@html marked.parse(finalLessonPlanOutput)}
+					{@html marked.parse(finalWorkshopPlanOutput)}
 				</div>
 				<div class="mt-4">
 					<button class="submit-button" on:click={copyToClipboard}
-						>Copy EMI Plan to Clipboard</button
+						>Copy Workshop Plan to Clipboard</button
 					>
 				</div>
 			</div>

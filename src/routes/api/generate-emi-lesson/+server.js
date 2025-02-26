@@ -1,110 +1,391 @@
-// src/routes/api/generate-lesson/+server.js
+// src/routes/api/generate-emi-lesson/+server.js
 
 /**
- * @file Handles the API endpoint for generating lesson plan phases using Anthropic's API.
- * This server-side code is responsible for receiving lesson details from the frontend,
- * constructing prompts for Anthropic's models based on the requested phase (e.g., refining objectives,
- * generating activities), sending these prompts to the Anthropic API, and returning the generated content.
- * It uses environment variables to securely access the Anthropic API key.
+ * @file Handles the API endpoint for generating EMI workshop plan phases using Anthropic's API.
+ * This server-side code is responsible for receiving workshop details from the frontend,
+ * constructing prompts for Anthropic's models based on the requested phase, sending these prompts
+ * to the Anthropic API, and returning the generated content. It supports a multi-phase
+ * workshop planning workflow where outputs from previous phases inform subsequent phases.
  */
 
-import { json } from '@sveltejs/kit'; // Utility for creating JSON responses in SvelteKit
-import Anthropic from '@anthropic-ai/sdk'; // Anthropic SDK for interacting with the Anthropic API
-import { ANTHROPIC_API_KEY } from '$env/static/private'; // Securely import API key from environment variables
+import { json } from '@sveltejs/kit';
+import Anthropic from '@anthropic-ai/sdk';
+import { ANTHROPIC_API_KEY } from '$env/static/private';
 
-// Initialize the Anthropic client with the API key.
-// This is done outside the POST function for efficiency, as it only needs to be initialized once.
+// Initialize the Anthropic client with the API key
 const anthropic = new Anthropic({
 	apiKey: ANTHROPIC_API_KEY
 });
 
 /**
- * POST endpoint for /api/generate-lesson
- * Handles requests to generate different phases of a lesson plan.
+ * POST endpoint for /api/generate-emi-lesson
+ * Handles requests to generate different phases of an EMI workshop plan.
  *
  * @param {Object} event - SvelteKit event object containing request details.
  * @returns {Response} JSON response containing the generated content for the requested phase, or an error.
  */
 export async function POST({ request }) {
 	try {
-		// Parse the request body as JSON. This should contain the lesson details from the form.
+		// Parse the request body as JSON
 		const formData = await request.json();
+		console.log('EMI formData received:', formData);
 
-		// Log formData for debugging
-		console.log('formData received:', formData);
-
-		// Extract the 'phase' header from the request. This indicates which phase of the lesson plan to generate.
+		// Extract the 'phase' header from the request
 		const phaseName = request.headers.get('phase');
-
-		// Check if the 'phase' header is present. If not, return a 400 error.
 		if (!phaseName) {
 			return json({ error: 'Phase header is missing' }, { status: 400 });
 		}
 
-		let prompt = ''; // Variable to hold the prompt for the Anthropic API
-		let model = 'claude-3-5-sonnet-20241022'; // Default Anthropic model (Sonnet - balanced speed and quality)
-		let max_tokens = 200; // Default maximum tokens for the response (adjust per phase as needed)
+		let prompt = '';
+		let model = 'claude-3-5-sonnet-20241022'; // Default model
+		let max_tokens = 200; // Default token limit
 
-		// Construct the prompt and adjust model parameters based on the requested phase.
+		// Get values with appropriate fallbacks
+		const topic = formData.topic || '';
+		const audience = formData.audience || 'University Students';
+		const duration = formData.workshopDuration || '';
+		const participantCount = formData.participantCount || '';
+		const workshopContext = formData.workshopContext || '';
+		const objectives = formData.objectives || '';
+
+		// Extract previous phase outputs if they exist
+		let refinedObjectives = '';
+		let activities = '';
+		let components = '';
+
+		// Find phase content by looking through the phases array
+		if (formData.phases && Array.isArray(formData.phases)) {
+			const objectivesPhase = formData.phases.find((p) => p.key === 'objectives');
+			refinedObjectives = objectivesPhase && objectivesPhase.content ? objectivesPhase.content : '';
+
+			const activitiesPhase = formData.phases.find((p) => p.key === 'activities');
+			activities = activitiesPhase && activitiesPhase.content ? activitiesPhase.content : '';
+
+			const componentsPhase = formData.phases.find((p) => p.key === 'components');
+			components = componentsPhase && componentsPhase.content ? componentsPhase.content : '';
+		}
+
+		// Construct the prompt based on the requested phase
 		switch (phaseName) {
 			case 'Refining Objectives':
-				prompt = `Refine the following learning objectives for a lesson plan. Grade Level: ${formData.grade}, Topic: ${formData.topic}, Objectives: ${formData.objectives}.  Make them more specific, measurable, achievable, relevant, and time-bound (SMART). Return only the refined objectives This is a test return random.`;
-				max_tokens = 300; // Increased tokens for potentially longer refined objectives
-				break;
-			case 'Generating Activities':
-				prompt = `Generate a list of engaging and varied activities for a lesson plan on ${formData.topic} for Grade ${formData.grade}. Class duration is ${formData.classDuration}. Co-teaching model is ${formData.coTeachingModel}. Learning objectives are: ${formData.objectives}. Consider the classroom context: ${formData.classDescription}.  Provide activities suitable for this context and objectives. This is a test return random activities in mark down.`;
-				max_tokens = 500; // Increased tokens for generating multiple activities
-				break;
-			case 'Preparing Components':
-				prompt = `Based on the lesson topic: ${formData.topic}, grade level: ${formData.grade}, and learning objectives: ${formData.objectives}, suggest necessary components for the lesson plan. Components could include materials, assessments, differentiation strategies, etc. This is a test return random.`;
-				max_tokens = 400;
-				break;
-			case 'Creating Final Plan':
-				prompt = `Create a complete lesson plan based on the following details:
-                Topic: ${formData.topic}
-                Grade Level: Grade ${formData.grade}
-                Class Duration: ${formData.classDuration}
-                Co-teaching Model: ${formData.coTeachingModel}
-                Learning Objectives: ${formData.objectives}
-                Classroom Context: ${formData.classDescription}
+				prompt = `As an expert English as a Medium of Instruction (EMI) Advisor in Taiwan, you are part of a multi-step workshop planning workflow. Your role in Phase 1 is to refine raw learning objectives and provide supporting context for later phases. Improve on, but do not disregard important details in the INPUT OBJECTIVES. This is what the workshop facilitator wants to work on.
 
-                This is a test return random in markdown with a joke at the end`;
-				max_tokens = 1024; // Significantly increased tokens for the final, detailed lesson plan
-				model = 'claude-3-opus-20240229'; // Opus model for higher quality final plan generation
+                INPUT OBJECTIVES:
+                ${objectives}
+
+                WORKSHOP CONTEXT:
+                Topic: ${topic}
+                Target Audience: ${audience}
+                Workshop Duration: ${duration}
+                Number of Participants: ${participantCount}
+                ${workshopContext ? `Additional Context: ${workshopContext}` : ''}
+
+                Your response should have two parts:
+
+                PART 1: REFINED OBJECTIVES (2-3 total)
+                Create 2-3 focused, achievable objectives based on the INPUT OBJECTIVES that are:
+                - Specific and measurable using clear action verbs
+                - Appropriate for the target audience and achievable in the given time
+                - Written to allow for different participation styles
+                - Structured as: "Participants will be able to [action verb] [specific skill/knowledge] [conditions] [criteria]"
+
+                PART 2: PLANNING CONSIDERATIONS
+                Provide key information for subsequent planning phases about:
+                a) Differentiation Opportunities
+                - How these objectives can be modified for different proficiency levels
+                - Suggested scaffolding approaches
+
+                b) Interactive Elements
+                - How to make these objectives work with a large group (${participantCount} participants)
+                - Potential small group activities and collaboration opportunities
+
+                c) Cultural Elements
+                - Cultural learning opportunities within these objectives
+                - Cross-cultural communication considerations for Taiwan context
+
+                d) Assessment Approaches
+                - Ways to measure participant achievement of these objectives
+                - Both formal and informal assessment suggestions appropriate for a workshop setting
+
+                Remember: Your output will be used by subsequent phases to generate detailed workshop activities and assessments. Keep your language clear and your suggestions specific.`;
+
+				model = 'claude-3-5-haiku-20241022';
+				max_tokens = 1000;
 				break;
+
+			case 'Designing Activities':
+				prompt = `As an expert English as a Medium of Instruction (EMI) Advisor in Taiwan, you are working on Phase 2 of the workshop planning workflow. Your role is to transform the refined objectives and planning considerations from Phase 1 into a structured sequence of interactive workshop activities.
+
+                PHASE 1 OUTPUT:
+                ${refinedObjectives ? refinedObjectives : 'No refined objectives provided'}
+
+                WORKSHOP CONTEXT:
+                Topic: ${topic}
+                Target Audience: ${audience}
+                Workshop Duration: ${duration}
+                Number of Participants: ${participantCount}
+                ${workshopContext ? `Additional Context: ${workshopContext}` : ''}
+
+                Create a detailed workshop procedure that:
+                1. Builds progressively toward the workshop objectives
+                2. Maintains clear connections between activities
+                3. Includes plenty of interactive elements and icebreakers
+                4. Allows flexibility for facilitator adaptation
+                5. Works effectively with larger groups (${participantCount} participants)
+                6. Incorporates both individual and group activities
+                7. Provides opportunities for active learning and participation
+
+                Please include a timing overview:
+                Time Distribution Overview
+                Total Workshop Time: ${duration} minutes
+                - Welcome & Icebreaker: [X] minutes
+                - Introduction & Objectives: [X] minutes
+                - Interactive Activities: [X] minutes
+                - Group Work: [X] minutes
+                - Reflection & Discussion: [X] minutes
+                - Conclusion: [X] minutes
+
+                Guidelines for Writing Activity Steps:
+                1. Write each step as a clear action
+                2. Start with the facilitator action, then describe participant response
+                3. Keep instructions simple and direct
+                4. Include approximate timing for each major step
+                5. Note key transitions between activities
+                6. Highlight opportunities for participant interaction
+                7. Include brief suggestions for checking understanding`;
+
+				model = 'claude-3-5-haiku-20241022';
+				max_tokens = 2000;
+				break;
+
+			case 'Creating Interactive Elements':
+				prompt = `As an expert English as a Medium of Instruction (EMI) Advisor in Taiwan, you are working on Phase 3 of the workshop planning workflow. Your role is to identify essential materials and create interactive elements that will engage all participants.
+
+                Previous Phase Outputs:
+                Objectives: ${refinedObjectives ? refinedObjectives : 'No refined objectives provided'}
+                Activities: ${activities ? activities : 'No activities provided'}
+
+                WORKSHOP CONTEXT:
+                Topic: ${topic}
+                Target Audience: ${audience}
+                Workshop Duration: ${duration}
+                Number of Participants: ${participantCount}
+                ${workshopContext ? `Additional Context: ${workshopContext}` : ''}
+
+                Please create these three sections:
+
+                ### Workshop Materials
+                List essential materials needed for this workshop:
+                - [Material with brief purpose]
+                - [Material with brief purpose]
+                (Include digital tools, handouts, multimedia resources, etc.)
+
+                ### Interactive Elements
+                Design 3-4 specific interactive elements that will engage participants of various English levels:
+
+                1. [Name of Interactive Element]
+                   - Purpose: [Brief description of learning purpose]
+                   - Setup: [How to set up the activity]
+                   - Procedure: [Step-by-step instructions]
+                   - Variations: [How to adapt for different proficiency levels]
+
+                2. [Name of Interactive Element]
+                   - Purpose: [Brief description of learning purpose]
+                   - Setup: [How to set up the activity]
+                   - Procedure: [Step-by-step instructions]
+                   - Variations: [How to adapt for different proficiency levels]
+
+                Focus on activities that:
+                - Maximize participation from all ${participantCount} participants
+                - Allow for both individual and group work
+                - Create opportunities for language practice
+                - Accommodate different proficiency levels
+                - Can be implemented with minimal preparation
+
+                ### Reflection Questions
+                Create 3 focused questions that help facilitators reflect on:
+                1. Participant engagement and learning outcomes
+                2. Workshop effectiveness and flow
+                3. Cultural/language considerations for future workshops
+
+                Remember: Keep your suggestions practical and appropriate for the audience and workshop duration. Your output will be used in the final phase to create a complete workshop plan.`;
+
+				model = 'claude-3-5-haiku-20241022';
+				max_tokens = 1500;
+				break;
+
+			case 'Finalizing Workshop Plan':
+				prompt = `You are assisting English as a Medium of Instruction (EMI) Advisors in Taiwan with Fulbright. This is the last phase in an AI workshop plan creation workflow. Your task in this final phase is to bring together all the previous phase outputs to create a cohesive final formatted version of this workshop plan which the facilitator can use to conduct an effective session.
+
+                Apply principles of effective workshop design throughout the plan by:
+                1. Including multiple engagement strategies (different motivational approaches)
+                2. Incorporating varied presentation methods (diverse ways of presenting content)
+                3. Providing multiple means of participation (different ways for participants to engage)
+                4. Ensuring backward design (clear objectives drive activities and assessment)
+                5. Building in opportunities for interaction among participants
+
+                Context Information:
+                Topic: ${topic}
+                Duration: ${duration} 
+                Target Audience: ${audience}
+                Number of Participants: ${participantCount}
+                ${workshopContext ? `Additional Context: ${workshopContext}` : ''}
+
+                Previous Phase Outputs:
+                Objectives Phase Output: ${refinedObjectives ? refinedObjectives : 'No refined objectives provided'}
+                Activities Phase Output: ${activities ? activities : 'No activities provided'}
+                Interactive Elements Phase Output: ${components ? components : 'No components provided'}
+
+                Workshop Plan Template:
+                    # ${topic} Workshop Plan
+                    **Target Audience:** ${audience}  
+                    **Duration:** ${duration}  
+                    **Number of Participants:** ${participantCount}
+
+                    ## Workshop Objectives
+                    By the end of this workshop, participants will be able to:
+                    1. [objective 1]
+                    2. [objective 2]
+                    
+                    ## Workshop Materials
+                    - [material]
+                    - [material]
+                    
+                    ## Workshop Structure
+                    
+                    ### I. Welcome & Icebreaker ([X] min)
+                    **Purpose:** 
+                    [Brief statement of purpose]
+
+                    **Activity Description:**
+                    [Describe the icebreaker activity]
+
+                    **Steps:**
+                    1. [Clear action step 1]
+                    2. [Clear action step 2]
+                    3. [Clear action step 3]
+
+                    ### II. Introduction & Objectives ([X] min)
+                    **Purpose:** 
+                    [Brief statement of purpose]
+
+                    **Steps:**
+                    1. [Clear action step 1]
+                    2. [Clear action step 2]
+                    3. [Clear action step 3]
+
+                    ### III. Main Activities ([X] min)
+                    **Activity 1: [Name]** ([X] min)
+                    - **Purpose:** [Brief description of learning purpose]
+                    - **Setup:** [How to set up the activity]
+                    - **Steps:**
+                      1. [Clear action step 1]
+                      2. [Clear action step 2]
+                      3. [Clear action step 3]
+                    - **Facilitation Notes:**
+                      - For lower proficiency participants: [Specific support strategy]
+                      - For higher proficiency participants: [Specific extension strategy] 
+
+                    **Activity 2: [Name]** ([X] min)
+                    - **Purpose:** [Brief description of learning purpose]
+                    - **Setup:** [How to set up the activity]
+                    - **Steps:**
+                      1. [Clear action step 1]
+                      2. [Clear action step 2]
+                      3. [Clear action step 3]
+                    - **Facilitation Notes:**
+                      - For lower proficiency participants: [Specific support strategy]
+                      - For higher proficiency participants: [Specific extension strategy] 
+
+                    ### IV. Group Work & Application ([X] min)
+                    **Activity Description:**
+                    [Describe the group work activity]
+
+                    **Steps:**
+                    1. [Clear action step 1]
+                    2. [Clear action step 2]
+                    3. [Clear action step 3]
+
+                    **Success Indicators:**
+                    - [Indicator]
+                    - [Indicator]
+
+                    ### V. Reflection & Discussion ([X] min)
+                    **Questions for Reflection:**
+                    1. [Question 1]
+                    2. [Question 2]
+                    3. [Question 3]
+
+                    **Facilitation Approach:**
+                    [Brief description of how to facilitate this discussion]
+
+                    ### VI. Conclusion & Next Steps ([X] min)
+                    **Summary Points:**
+                    - [Key point 1]
+                    - [Key point 2]
+                    - [Key point 3]
+
+                    **Action Items for Participants:**
+                    1. [Action item 1]
+                    2. [Action item 2]
+                    
+                    ## Facilitator Notes
+                    **Preparation Checklist:**
+                    - [Preparation item 1]
+                    - [Preparation item 2]
+                    
+                    **Potential Challenges & Solutions:**
+                    - **Challenge:** [Potential challenge]  
+                      **Solution:** [Suggested solution]
+                    - **Challenge:** [Potential challenge]  
+                      **Solution:** [Suggested solution]
+                    
+                    **Reflection Questions for Facilitators:**
+                    1. [Question 1]
+                    2. [Question 2]
+                    3. [Question 3]
+
+                Note: 
+                - Ensure each activity includes opportunities for all participants to engage
+                - Include strategies for managing a large group of ${participantCount} participants
+                - Provide clear facilitation notes to help the workshop run smoothly
+                - Use consistent markdown formatting throughout and use numbered lists where indicated in the template.`;
+
+				model = 'claude-3-7-sonnet-20250219';
+				max_tokens = 4000;
+				break;
+
 			default:
-				// If the phase name is not recognized, return a 400 error.
 				return json({ error: 'Invalid phase name' }, { status: 400 });
 		}
 
 		// Log prompt before sending to LLM
-		console.log(`Phase: ${phaseName} - Prompt being sent to LLM:`, prompt);
+		console.log(`EMI Phase: ${phaseName} - Prompt being sent to LLM:`, prompt);
 
-		// Send the prompt to the Anthropic API using the configured model and parameters.
+		// Send the prompt to the Anthropic API
 		const msg = await anthropic.messages.create({
 			model: model,
 			max_tokens: max_tokens,
 			messages: [{ role: 'user', content: prompt }]
 		});
 
-		// Extract the generated content from the Anthropic API response.
+		// Extract the generated content
 		let content = msg.content[0].text;
 
 		// Log LLM output
-		console.log(`Phase: ${phaseName} - LLM Output:`, content);
+		console.log(`EMI Phase: ${phaseName} - LLM Output:`, content);
 
-		// Return the generated content in a JSON response, including the phase name for frontend processing.
+		// Return the generated content
 		return json({
 			phase: {
 				name: phaseName,
-				content: content // The generated content for this phase
+				content: content
 			}
 		});
 	} catch (error) {
-		// Handle any errors that occur during the API call or processing.
-		console.error('Error calling Anthropic API:', error); // Log the error to the server console for debugging
+		console.error('Error calling Anthropic API for EMI workshop:', error);
 		return json(
-			{ error: 'Failed to generate lesson plan phase', details: error.message }, // Return a 500 error with a user-friendly message and error details
+			{ error: 'Failed to generate workshop plan phase', details: error.message },
 			{ status: 500 }
 		);
 	}

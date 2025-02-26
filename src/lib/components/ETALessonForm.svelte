@@ -1,3 +1,4 @@
+<!-- ETALessonForm.svelte -->
 <script>
     import { marked } from 'marked';
     import ProgressBar from '$lib/components/ProgressBar.svelte';

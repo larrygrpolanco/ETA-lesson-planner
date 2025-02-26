@@ -210,6 +210,34 @@
 	padding: 0; /* Reset padding for code inside pre */
 }
 
+/* Add or update these rules in your CSS */
+.markdown-body ul,
+.markdown-body ol {
+  padding-left: 2rem; /* Increased indentation */
+  margin-bottom: 1.5rem; /* More space after lists */
+  margin-top: 0.5rem; /* Space before lists */
+}
+
+.markdown-body ul li,
+.markdown-body ol li {
+  margin-bottom: 0.5rem; /* Space between list items */
+  line-height: 1.5; /* Better line height for readability */
+}
+
+/* Force number display for ordered lists */
+.markdown-body ol {
+  list-style-type: decimal !important;
+}
+
+/* Style nested lists */
+.markdown-body ul ul,
+.markdown-body ul ol,
+.markdown-body ol ul,
+.markdown-body ol ol {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
 /* Add this to your <style> section */
 .dot-animation {
   display: inline-flex;
