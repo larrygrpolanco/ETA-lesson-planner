@@ -48,12 +48,117 @@ export async function POST({ request }) {
 		// Construct the prompt and adjust model parameters based on the requested phase.
 		switch (phaseName) {
 			case 'Refining Objectives':
-				prompt = `Refine the following learning objectives for a lesson plan. Grade Level: ${formData.grade}, Topic: ${formData.topic}, Objectives: ${formData.objectives}.  Make them more specific, measurable, achievable, relevant, and time-bound (SMART). Return only the refined objectives This is a test return random.`;
-				max_tokens = 300; // Increased tokens for potentially longer refined objectives
+				prompt = `You are an expert English Teaching Assistant (ETA) in Taiwan, participating in a multi-step lesson planning workflow. Your task is to refine learning objectives and provide supporting context for later planning phases. Review the following input data:
+
+                INPUT OBJECTIVES:
+                ${formData.objectives}
+
+                LESSON CONTEXT:
+                Topic: ${formData.topic}
+                Grade Level: ${formData.grade}
+                Class Duration: ${formData.duration}
+                Co-teaching Model: ${formData.coteachingModel}
+                ${formData.description ? `Additional Description: ${formData.description}` : ''}
+
+                Your response should have two parts:
+
+                PART 1: REFINED OBJECTIVES (2-3 total)
+                Create 2-3 focused, achievable objectives based on the INPUT OBJECTIVES that are:
+                - Specific and measurable using clear action verbs
+                - Grade-appropriate and achievable in the given time
+                - Written to allow for differentiation
+                - Structured as: "Students will be able to [action verb] [specific skill/knowledge] [conditions] [criteria]"
+
+                PART 2: PLANNING CONSIDERATIONS
+                Provide key information for subsequent planning phases about:
+                a) Differentiation Opportunities
+                - How these objectives can be modified for different proficiency levels
+                - Suggested scaffolding approaches
+
+                b) Co-teaching Integration
+                - How these objectives work with the chosen co-teaching model (${formData.coteachingModel})
+                - Potential role distribution between ETA and LET
+
+                c) Cultural Elements
+                - Cultural learning opportunities within these objectives
+                - Cross-cultural communication considerations
+
+                d) Assessment Approaches
+                - Ways to measure student achievement of these objectives
+                - Both formal and informal assessment suggestions`;
+				max_tokens = 800; // Increased token limit for the detailed response
 				break;
 			case 'Generating Activities':
-				prompt = `Generate a list of engaging and varied activities for a lesson plan on ${formData.topic} for Grade ${formData.grade}. Class duration is ${formData.classDuration}. Co-teaching model is ${formData.coTeachingModel}. Learning objectives are: ${formData.objectives}. Consider the classroom context: ${formData.classDescription}.  Provide activities suitable for this context and objectives. This is a test return random activities in mark down.`;
-				max_tokens = 500; // Increased tokens for generating multiple activities
+				prompt = `As an expert English Teaching Assistant in Taiwan, your task is to transform the lesson objectives into a structured sequence of classroom activities.
+
+                LESSON DETAILS:
+                - Topic: ${formData.topic}
+                - Grade Level: ${formData.grade}
+                - Class Duration: ${formData.classDuration} minutes
+                - Co-Teaching Model: ${formData.coTeachingModel}
+                - Objectives: ${formData.refinedObjectives}
+                - Classroom Context: ${formData.classDescription || 'Standard classroom environment'}
+
+                Create a detailed lesson procedure that:
+                1. Builds progressively toward the lesson objectives
+                2. Maintains clear connections between activities
+                3. Includes informal assessment opportunities throughout
+                4. Allows flexibility for teacher adaptation
+                5. Keeps activities simple and broadly applicable
+
+                Please structure your response using this format:
+
+                ### Time Distribution Overview
+                Total Class Time: ${formData.classDuration} minutes
+                - Warm-up: [X] minutes
+                - Introduction: [X] minutes
+                - Activities: [X] minutes
+                - Assessment: [X] minutes
+                - Closure: [X] minutes
+
+                ### I. Warm-up ([X] min)
+                Objective Connection: [Brief statement connecting to objectives]
+                Steps:
+                1. [Clear action step]
+                2. [Clear action step]
+                3. [Clear action step]
+
+                ### II. Introduction ([X] min)
+                Objective Connection: [Brief statement connecting to objectives]
+                Steps:
+                1. [Clear action step]
+                2. [Clear action step]
+                3. [Clear action step]
+
+                ### III. Main Activities ([X] min)
+                Objective Connection: [Brief statement connecting to objectives]
+                Steps:
+                1. [Clear action step]
+                2. [Clear action step]
+                3. [Clear action step]
+
+                Differentiation Note:
+                [Brief suggestion for adapting to different ability levels]
+
+                ### IV. Assessment ([X] min)
+                Success Criteria:
+                - [Criterion 1]
+                - [Criterion 2]
+
+                Steps:
+                1. [Clear action step]
+                2. [Clear action step]
+                3. [Clear action step]
+
+                ### V. Closure ([X] min)
+                Steps:
+                1. [Clear action step]
+                2. [Clear action step]
+
+                ### VI. Optional Extensions
+                [1-3 extension activities if time permits]`;
+
+				max_tokens = 1200; // Increased for comprehensive lesson plan activities
 				break;
 			case 'Preparing Components':
 				prompt = `Based on the lesson topic: ${formData.topic}, grade level: ${formData.grade}, and learning objectives: ${formData.objectives}, suggest necessary components for the lesson plan. Components could include materials, assessments, differentiation strategies, etc. This is a test return random.`;
