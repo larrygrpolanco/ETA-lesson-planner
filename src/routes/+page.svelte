@@ -19,7 +19,7 @@
 </script>
 
 <!-- src/routes/+page.svelte -->
-<div class="min-h-screen bg-gray-100 transition-colors duration-500 dark:bg-slate-900">
+<div class="blob-background min-h-screen transition-colors duration-500 dark:bg-slate-900">
 	<main class="container mx-auto max-w-3xl px-6 py-16">
 		<!-- Header with Dark Mode Toggle -->
 		<div class="relative mb-10 text-center">
@@ -33,7 +33,7 @@
 				Lesson Planner
 			</h1>
 			<p class="text-lg text-gray-700 dark:text-slate-400">
-				Craft personalized lesson plans effortlessly.
+				Create personalized lesson plans easily.
 			</p>
 		</div>
 

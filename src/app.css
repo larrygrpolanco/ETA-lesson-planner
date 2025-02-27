@@ -1,3 +1,4 @@
+/* app.css */
 @import 'tailwindcss';
 
 /* ====== BASE STYLES ====== */
@@ -97,7 +98,12 @@ form,
 	color: var(--text-muted);
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
 	color: var(--heading-color);
 }
 
@@ -244,8 +250,7 @@ p {
 
 /* ====== MARKDOWN STYLING ====== */
 .markdown-body {
-	font-family:
-		-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
 	font-size: 1rem;
 	line-height: 1.6;
 	color: var(--text-primary);
@@ -391,6 +396,77 @@ select option {
 
 .dot-animation:hover span {
 	animation-duration: 1.2s;
+}
+
+/* ====== Blobs ====== */
+.blob-background {
+	background-color: #f9fafb;
+	position: relative;
+	isolation: isolate;
+	overflow-x: hidden;
+}
+
+.blob-background::before,
+.blob-background::after {
+	content: '';
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	top: 0;
+	left: 0;
+	z-index: -1;
+	pointer-events: none;
+}
+
+.blob-background::before {
+	background:
+		radial-gradient(circle at 20% 20%, rgba(59, 130, 246, 0.25) 0%, transparent 40%),
+		radial-gradient(circle at 80% 80%, rgba(99, 102, 241, 0.25) 0%, transparent 40%);
+	animation: blobMove 30s infinite alternate ease-in-out;
+	background-size: 150% 150%;
+}
+
+.blob-background::after {
+	background:
+		radial-gradient(circle at 80% 20%, rgba(14, 165, 233, 0.2) 0%, transparent 40%),
+		radial-gradient(circle at 20% 80%, rgba(56, 189, 248, 0.2) 0%, transparent 40%);
+	animation: blobMove2 30s infinite alternate-reverse ease-in-out;
+	background-size: 150% 150%;
+}
+
+@keyframes blobMove {
+	0% {
+		background-position: 0% 0%;
+	}
+	100% {
+		background-position: 100% 100%;
+	}
+}
+
+@keyframes blobMove2 {
+	0% {
+		background-position: 100% 100%;
+	}
+	100% {
+		background-position: 0% 0%;
+	}
+}
+
+/* Dark mode - replace :global(.dark) with just .dark */
+.dark .blob-background {
+	background-color: #0f172a;
+}
+
+.dark .blob-background::before {
+	background:
+		radial-gradient(circle at 20% 20%, rgba(59, 130, 246, 0.3) 0%, transparent 50%),
+		radial-gradient(circle at 80% 80%, rgba(99, 102, 241, 0.3) 0%, transparent 50%);
+}
+
+.dark .blob-background::after {
+	background:
+		radial-gradient(circle at 80% 20%, rgba(14, 165, 233, 0.25) 0%, transparent 50%),
+		radial-gradient(circle at 20% 80%, rgba(56, 189, 248, 0.25) 0%, transparent 50%);
 }
 
 /* ====== ACCESSIBILITY ====== */
