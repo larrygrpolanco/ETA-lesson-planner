@@ -10,8 +10,8 @@
 		'Teachers',
 		'University Students',
 		'Senior High Students',
-		'Elementary Students',
-		'Junior High Students'
+		'Junior High Students',
+        'Elementary Students'
 	];
 
 	let formData = {
