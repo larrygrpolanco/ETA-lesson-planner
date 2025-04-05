@@ -1,25 +1,29 @@
 // src/routes/api/generate-eta-lesson/+server.js
 
 /**
- * @file Handles the API endpoint for generating lesson plan phases using Anthropic's API.
- * This server-side code is responsible for receiving lesson details from the frontend,
- * constructing prompts for Anthropic's models based on the requested phase, sending these prompts
- * to the Anthropic API, and returning the generated content. It supports a multi-phase
- * lesson planning workflow where outputs from previous phases inform subsequent phases.
+ * @file Handles the API endpoint for generating lesson plan phases using either Anthropic or DeepSeek APIs.
+ * This server-side code receives lesson details, constructs prompts based on the requested phase,
+ * sends these prompts to the selected LLM API, and returns the generated content.
+ * Supports switching between providers via the LLM_PROVIDER environment variable.
  */
 
 import { json } from '@sveltejs/kit';
 import Anthropic from '@anthropic-ai/sdk';
-import { ANTHROPIC_API_KEY } from '$env/static/private';
+import OpenAI from 'openai'; // Import OpenAI SDK for DeepSeek compatibility
+import {
+	ANTHROPIC_API_KEY,
+	DEEPSEEK_API_KEY,
+	LLM_PROVIDER // Read the provider choice from env
+} from '$env/static/private';
 
-// Initialize the Anthropic client with the API key
-const anthropic = new Anthropic({
-	apiKey: ANTHROPIC_API_KEY
-});
+// --- Constants ---
+const DEEPSEEK_BASE_URL = 'https://api.deepseek.com/v1'; // Use v1 for OpenAI compatibility
+const DEEPSEEK_CHAT_MODEL = 'deepseek-chat';
+// Add other DeepSeek models if needed, e.g., const DEEPSEEK_REASONER_MODEL = 'deepseek-reasoner';
 
 /**
  * POST endpoint for /api/generate-eta-lesson
- * Handles requests to generate different phases of a lesson plan.
+ * Handles requests to generate different phases of a lesson plan using the configured LLM provider.
  *
  * @param {Object} event - SvelteKit event object containing request details.
  * @returns {Response} JSON response containing the generated content for the requested phase, or an error.
@@ -28,7 +32,7 @@ export async function POST({ request }) {
 	try {
 		// Parse the request body as JSON
 		const formData = await request.json();
-		console.log('formData received:', formData);
+		console.log('ETA formData received:', formData);
 
 		// Extract the 'phase' header from the request
 		const phaseName = request.headers.get('phase');
@@ -36,11 +40,14 @@ export async function POST({ request }) {
 			return json({ error: 'Phase header is missing' }, { status: 400 });
 		}
 
+		// --- Determine Provider ---
+		const provider = (LLM_PROVIDER || 'anthropic').toLowerCase(); // Default to anthropic if not set
+
 		let prompt = '';
-		let model = 'claude-3-5-sonnet-20241022'; // Default model
+		let model = ''; // Model will be set based on provider and phase
 		let max_tokens = 200; // Default token limit
 
-		// Get values with appropriate fallbacks
+		// --- Get Form Data ---
 		const topic = formData.topic || '';
 		const grade = formData.grade || '';
 		const duration = formData.classDuration || '';
@@ -53,19 +60,19 @@ export async function POST({ request }) {
 		let activities = '';
 		let components = '';
 
-		// Find phase content by looking through the phases array
 		if (formData.phases && Array.isArray(formData.phases)) {
 			const objectivesPhase = formData.phases.find((p) => p.key === 'objectives');
-			refinedObjectives = objectivesPhase && objectivesPhase.content ? objectivesPhase.content : '';
-
+			refinedObjectives = objectivesPhase?.content || '';
 			const activitiesPhase = formData.phases.find((p) => p.key === 'activities');
-			activities = activitiesPhase && activitiesPhase.content ? activitiesPhase.content : '';
-
+			activities = activitiesPhase?.content || '';
 			const componentsPhase = formData.phases.find((p) => p.key === 'components');
-			components = componentsPhase && componentsPhase.content ? componentsPhase.content : '';
+			components = componentsPhase?.content || '';
 		}
 
-		// Construct the prompt based on the requested phase
+		// --- Construct Prompt and Select Model based on Phase ---
+		let anthropicModel = ''; // Temporary variable for Anthropic model selection
+		let deepseekModel = DEEPSEEK_CHAT_MODEL; // Default DeepSeek model
+
 		switch (phaseName) {
 			case 'Refining Objectives':
 				prompt = `As an expert English Teaching Assistant in Taiwan, you are part of a multi-step lesson planning workflow. Your role in Phase 1 is to refine raw learning objectives and provide supporting context for later phases. Improve on, but do not disregard important details in the INPUT OBJECTIVES. This is what the teacher wants to work on.
@@ -109,7 +116,8 @@ export async function POST({ request }) {
 
                 Remember: Your output will be used by subsequent phases to generate detailed lesson activities and assessments. Keep your language clear and your suggestions specific.`;
 
-				model = 'claude-3-5-haiku-20241022';
+				anthropicModel = 'claude-3-haiku-20240307'; // Use Haiku for faster phases if desired
+				// deepseekModel remains DEEPSEEK_CHAT_MODEL
 				max_tokens = 1000;
 				break;
 
@@ -152,7 +160,8 @@ export async function POST({ request }) {
                 6. Highlight opportunities for student interaction
                 7. Include brief suggestions for informal assessment`;
 
-				model = 'claude-3-5-haiku-20241022';
+				anthropicModel = 'claude-3-haiku-20240307'; // Use Haiku
+				// deepseekModel remains DEEPSEEK_CHAT_MODEL
 				max_tokens = 2000;
 				break;
 
@@ -201,7 +210,8 @@ export async function POST({ request }) {
 
                 Remember: Keep your lists concise and focused on essentials only. Your output will be used in the final phase to create a complete lesson plan.`;
 
-				model = 'claude-3-5-haiku-20241022';
+				anthropicModel = 'claude-3-haiku-20240307'; // Use Haiku
+				// deepseekModel remains DEEPSEEK_CHAT_MODEL
 				max_tokens = 1000;
 				break;
 
@@ -216,7 +226,7 @@ export async function POST({ request }) {
 
                 Context Information:
                 Topic: ${topic}
-                Time: ${duration} 
+                Time: ${duration}
                 Grade: ${grade}
                 Co-teaching Model: ${coteachingModel}
                 ${description ? `Additional Description: ${description}` : ''}
@@ -228,30 +238,30 @@ export async function POST({ request }) {
 
                 Lesson Plan Template:
                     # [Topic]
-                    **Grade:** [grade]  
-                    **Time:** [duration]  
+                    **Grade:** [grade]
+                    **Time:** [duration]
 
                     ## Learning Objectives
                     Students will be able to:
                     1. [objective 1]
                     2. [objective 2]
-                    
+
                     ## Teaching Materials
                     - [material]
                     - [material]
-                    
+
                     ## Basic Vocabulary & Sentence Patterns
                     **New Vocabulary:**
                     - [word in english and traditional chinese]
                     - [word in english and traditional chinese]
-                    
+
                     **Target Patterns:**
                     - [pattern]
                     - [pattern]
-                    
+
                     ## Procedures
                     ### I. Warm-up ([X] min)
-                    **Objective Connection:** 
+                    **Objective Connection:**
                     [Brief statement connecting to objectives]
 
                     **Steps:**
@@ -261,7 +271,7 @@ export async function POST({ request }) {
 
 
                     ### II. Introduction ([X] min)
-                    **Objective Connection:** 
+                    **Objective Connection:**
                     [Brief statement connecting to objectives]
 
                     **Steps:**
@@ -270,7 +280,7 @@ export async function POST({ request }) {
                     3. [Clear action step 3]
 
                     ### III. Main Activities ([X] min)
-                    **Objective Connection:** 
+                    **Objective Connection:**
                     [Brief statement connecting to objectives]
 
                     **Steps:**
@@ -280,7 +290,7 @@ export async function POST({ request }) {
 
                     Differentiation Note:
                     - *For struggling learners:* [Specific support strategy]
-                    - *For advanced learners:* [Specific extension strategy] 
+                    - *For advanced learners:* [Specific extension strategy]
                     - *Multiple means of engagement:* [How activity provides options for interest]
                     - *Multiple means of representation:* [How content is presented in various ways]
                     - *Multiple means of expression* [How students can demonstrate learning differently]
@@ -308,18 +318,19 @@ export async function POST({ request }) {
 
                     ### VI. Optional Extensions
                     [1-3 extension activities if time permits, with at least one addressing advanced learners]
-                    
+
                     ## Reflection Questions for Teachers
                     1. [Question 2]
                     2. [Question 1]
 
-                Note: 
+                Note:
                 - Ensure each activity includes at least one UDL element (engagement, representation, or expression)
                 - Include differentiation strategies for diverse learners
                 - Provide multiple assessment options aligned with objectives
                 - Use consistent markdown formatting throughout and use numbered lists where numbered in the template.`;
 
-				model = 'claude-3-7-sonnet-20250219';
+				anthropicModel = 'claude-3-5-sonnet-20240620'; // Use Sonnet 3.5 for the final complex task
+				// deepseekModel remains DEEPSEEK_CHAT_MODEL
 				max_tokens = 4000;
 				break;
 
@@ -327,23 +338,73 @@ export async function POST({ request }) {
 				return json({ error: 'Invalid phase name' }, { status: 400 });
 		}
 
-		// Log prompt before sending to LLM
-		console.log(`Phase: ${phaseName} - Prompt being sent to LLM:`, prompt);
+		// Log prompt before sending
+		console.log(
+			`ETA Phase: ${phaseName} - Provider: ${provider} - Prompt being sent to LLM:`,
+			prompt
+		);
 
-		// Send the prompt to the Anthropic API
-		const msg = await anthropic.messages.create({
-			model: model,
-			max_tokens: max_tokens,
-			messages: [{ role: 'user', content: prompt }]
-		});
+		let content = '';
 
-		// Extract the generated content
-		let content = msg.content[0].text;
+		// --- Call the appropriate API based on the provider ---
+		if (provider === 'deepseek') {
+			if (!DEEPSEEK_API_KEY) {
+				throw new Error('DEEPSEEK_API_KEY is not set in environment variables.');
+			}
+			// Initialize DeepSeek client (using OpenAI SDK)
+			const deepseekClient = new OpenAI({
+				apiKey: DEEPSEEK_API_KEY,
+				baseURL: DEEPSEEK_BASE_URL
+			});
 
-		// Log LLM output
-		console.log(`Phase: ${phaseName} - LLM Output:`, content);
+			model = deepseekModel; // Assign the selected DeepSeek model
 
-		// Return the generated content
+			const completion = await deepseekClient.chat.completions.create({
+				model: model,
+				messages: [
+					// Deepseek/OpenAI generally benefits from a system prompt
+					{
+						role: 'system',
+						content:
+							'You are a helpful assistant specializing in creating educational materials for English Teaching Assistants in Taiwan.'
+					},
+					{ role: 'user', content: prompt }
+				],
+				max_tokens: max_tokens
+				// Add other DeepSeek/OpenAI compatible parameters if needed (e.g., temperature)
+				// temperature: 0.7,
+			});
+
+			content = completion.choices[0]?.message?.content || '';
+			// Log LLM output
+			console.log(`ETA Phase: ${phaseName} - DeepSeek Output:`, content);
+		} else if (provider === 'anthropic') {
+			if (!ANTHROPIC_API_KEY) {
+				throw new Error('ANTHROPIC_API_KEY is not set in environment variables.');
+			}
+			// Initialize Anthropic client
+			const anthropicClient = new Anthropic({
+				apiKey: ANTHROPIC_API_KEY
+			});
+
+			model = anthropicModel; // Assign the selected Anthropic model
+
+			const msg = await anthropicClient.messages.create({
+				model: model,
+				max_tokens: max_tokens,
+				// Anthropic allows a dedicated system prompt parameter
+				// system: 'You are a helpful assistant specializing in creating educational materials for English Teaching Assistants in Taiwan.',
+				messages: [{ role: 'user', content: prompt }]
+			});
+
+			content = msg.content[0]?.text || '';
+			// Log LLM output
+			console.log(`ETA Phase: ${phaseName} - Anthropic Output:`, content);
+		} else {
+			return json({ error: `Unsupported LLM_PROVIDER: ${provider}` }, { status: 501 });
+		}
+
+		// --- Return the generated content ---
 		return json({
 			phase: {
 				name: phaseName,
@@ -351,9 +412,25 @@ export async function POST({ request }) {
 			}
 		});
 	} catch (error) {
-		console.error('Error calling Anthropic API:', error);
+		console.error(`Error calling ${LLM_PROVIDER || 'LLM'} API for ETA lesson:`, error);
+		const errorMessage = error instanceof Error ? error.message : String(error);
+		// Try to parse potential API error details
+		let details = errorMessage;
+		if (error?.response?.data) {
+			details = `${errorMessage} - ${JSON.stringify(error.response.data)}`;
+		} else if (error?.error?.message) {
+			// Structure for OpenAI/DeepSeek SDK errors
+			details = error.error.message;
+		} else if (error?.message) {
+			// Structure for Anthropic SDK errors
+			details = error.message;
+		}
+
 		return json(
-			{ error: 'Failed to generate lesson plan phase', details: error.message },
+			{
+				error: `Failed to generate lesson plan phase using ${LLM_PROVIDER || 'LLM'}`,
+				details: details
+			},
 			{ status: 500 }
 		);
 	}
