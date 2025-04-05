@@ -3,8 +3,11 @@
 	import ETALessonForm from '$lib/components/ETALessonForm.svelte';
 	import EMIWorkshopForm from '$lib/components/EMIWorkshopForm.svelte';
 	import DarkModeToggle from '$lib/components/DarkModeToggle.svelte';
+	import AboutModal from '$lib/components/AboutModal.svelte';
+	import { Info } from 'lucide-svelte';
 
 	let activeTab = 'eta'; // Default to ETA tab
+	let showAboutModal = false;
 
 	const coTeachingOptions = [
 		'One teach, one observe',
@@ -21,19 +24,28 @@
 <!-- src/routes/+page.svelte -->
 <div class="blob-background min-h-screen transition-colors duration-500 dark:bg-slate-900">
 	<main class="container mx-auto max-w-3xl px-6 py-16">
-		<!-- Header with Dark Mode Toggle -->
+		<!-- Header with Dark Mode Toggle and About Button -->
 		<div class="relative mb-10 text-center">
-			<!-- Button positioned absolutely -->
-			<div class="absolute top-0 right-0">
+			<!-- Buttons positioned absolutely -->
+			<div class="absolute top-0 right-0 flex items-center space-x-2">
+				<!-- About Button/Link -->
+				<button
+					on:click={() => (showAboutModal = true)}
+					class="rounded-full p-1.5 text-gray-500 transition-colors hover:text-gray-800 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none dark:text-gray-400 dark:hover:text-gray-200 dark:focus:ring-offset-slate-900"
+					aria-label="About this app"
+				>
+					<Info class="h-5 w-5" />
+				</button>
+
 				<DarkModeToggle />
 			</div>
 
-			<!-- Title centered properly without padding adjustments -->
+			<!-- Title centered properly -->
 			<h1 class="mb-3 text-3xl leading-tight font-bold text-gray-900 dark:text-slate-200">
-				Lesson Planner
+				Fulbright Planner
 			</h1>
 			<p class="text-lg text-gray-700 dark:text-slate-400">
-				Create personalized lesson plans easily.
+				Detail your context below to create targeted lesson plans.
 			</p>
 		</div>
 
@@ -67,5 +79,8 @@
 		{#if activeTab === 'emi'}
 			<EMIWorkshopForm />
 		{/if}
+
+		<!-- Instantiate the Modal -->
+		<AboutModal open={showAboutModal} on:close={() => showAboutModal = false} />
 	</main>
 </div>
